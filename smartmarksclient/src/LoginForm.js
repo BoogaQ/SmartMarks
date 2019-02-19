@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
+import Background from "./Images/login-background.jpg";
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Grow from "@material-ui/core/Grow";
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Login from "./Login";
 import Paper from '@material-ui/core/Paper';
-import Register from "./Register";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
+import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {Link} from "react-router-dom";
-import Background from "./Images/login-background.jpg";
+
 
 const styles = theme => ({
   main: {
@@ -21,6 +21,7 @@ const styles = theme => ({
       marginLeft: 'auto',
       marginRight: 'auto',
     },
+    height: 400,
   },
   background: {
     backgroundImage: `url(${Background})`,
@@ -36,13 +37,14 @@ const styles = theme => ({
   avatar: {
     margin: theme.spacing.unit*2,
     backgroundColor: theme.palette.secondary.main,
-  },
+  }
 });
 
 class SignIn extends React.Component {
   constructor() {
     super();
     this.state = {
+      value: 0,
       email: "",
       password: "",
       repeat: "",
@@ -53,11 +55,17 @@ class SignIn extends React.Component {
   handleChange = (event, value) => {
     this.setState({value});
   };
-
-  handleSubmit = (event) => {
+  
+  submitForm = (event) => {
+    console.log(event.target);
     event.preventDefault();
-    const data = new FormData(event.target);
-  }
+    const {email, password} = this.state;
+    if (!email || !password) return;
+    else {
+      const data = new FormData(event.target);
+      console.log(data);
+    }
+  };
   onChangeText = (event) => {
     const newState = {...this.state};
     newState[event.target.name] = event.target.value;
@@ -76,9 +84,17 @@ class SignIn extends React.Component {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        {this.state.value==0? (
-          <Login handleSubmit={this.handleSubmit} textChange={this.onChangeText}/>
-        ) : (<Register/>)}
+        <CssBaseline />
+        <Typography component="h1" variant="h5">
+          {this.state.value===0? ("Sign in") : ("Register")}
+        </Typography>
+        {this.state.value===0? (
+          <Login register={false} handleSubmit={this.submitForm} textChange={this.onChangeText}
+           email={this.state.email} password={this.state.password} repeat={this.state.repeat}/>
+        ) : (
+          <Login register={true} handleSubmit={this.submitForm} textChange={this.onChangeText}
+           email={this.state.email} password={this.state.password} repeat={this.state.repeat}/>
+        )}
       </Paper>
     </main>
     );
