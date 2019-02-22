@@ -25,8 +25,11 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	
 	@NotBlank
-	private String email;
+	private String emailId;
 	
 	@NotBlank
 	private String password;
@@ -42,10 +45,13 @@ public class User implements Serializable {
 	private Date updateddAt;
 	
 	public String getEmail() {
-		return email;
+		return emailId;
 	}
 	public void setEmail(String email) {
-		this.email = email;
+		this.emailId = email;
+	}
+	public String getPassword() {
+		return this.password;
 	}
 	public void setPassword(String password) {
 		this.password = password;

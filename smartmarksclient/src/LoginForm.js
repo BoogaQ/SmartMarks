@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
+import axios from "axios";
 import Background from "./Images/login-background.jpg";
 import CssBaseline from '@material-ui/core/CssBaseline';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Login from "./Login";
 import Paper from '@material-ui/core/Paper';
+import {Redirect} from "react-router-dom"
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import Typography from '@material-ui/core/Typography';
@@ -48,6 +50,7 @@ class SignIn extends React.Component {
       email: "",
       password: "",
       repeat: "",
+      authenticated: false
     }
     this.onChangeText = this.onChangeText.bind(this);
   }
@@ -61,10 +64,17 @@ class SignIn extends React.Component {
     event.preventDefault();
     const {email, password} = this.state;
     if (!email || !password) return;
-    else {
-      const data = new FormData(event.target);
-      console.log(data);
-    }
+    axios.post("http://localhost:8080/api/login", {
+      "email": email,
+      "password": password,
+    })
+    .then((response) => {
+      if (!response.data.error) {
+        this.setState({authenticated: true});
+        this.props.history.push("/");
+      }
+    })
+
   };
   onChangeText = (event) => {
     const newState = {...this.state};

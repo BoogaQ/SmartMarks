@@ -56,7 +56,6 @@ class NavBar extends React.Component {
     const {classes} = this.props;
     const {auth, anchorEl} = this.state;
     const open = Boolean(anchorEl);
-
     return (
       <div className={classes.root}>
         <AppBar position="static" style={{background: "#424242"}}>
