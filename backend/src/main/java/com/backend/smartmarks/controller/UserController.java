@@ -1,53 +1,45 @@
 package com.backend.smartmarks.controller;
-
-
-import java.util.HashMap;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.backend.smartmarks.exception.ApiResponse;
 import com.backend.smartmarks.model.User;
 import com.backend.smartmarks.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins="http://localhost:5001")
+@CrossOrigin
 public class UserController {
 	
 	@Autowired
 	UserRepository userRepository;
 	
 	@PostMapping("/register")
-	public HashMap<String, Object> createUser(@Valid @RequestBody User user) {
-		HashMap<String, Object> message = new HashMap<>();
+	public ApiResponse createUser(@Valid @RequestBody User user) {
+		ApiResponse response;
 		User existing = userRepository.findByEmailIdIgnoreCase(user.getEmail());
 		if (existing != null) {
-			message.put("error", true);
-			message.put("message", "Email Already Exists.");
+			response = new ApiResponse(false, "There is an account already registered with that email.");
 		} else {
 			userRepository.save(user);
-			message.put("error", false);
-			message.put("message", "success");
+			response = new ApiResponse(true, "Account created!");
 		}
-		return message;
+		return response;
 
 	}
 	@PostMapping("/login")
-	public HashMap<String, Object>  login(@Valid @RequestBody User user) {
-		HashMap<String, Object> message = new HashMap<>();
+	public ApiResponse login(@Valid @RequestBody User user) {		
 		User existing = userRepository.findByEmailIdIgnoreCase(user.getEmail());
-		
-		if (existing.getPassword().equals(user.getPassword())) {
-			message.put("error", false);
-			message.put("message", "Success!");
-		} else {
-			message.put("error", true);
-			message.put("message", "Email or password incorrect.");
-		}
-		return message;
-
-		
-	}
-	
+		ApiResponse response;
+		try {
+			if (existing!=null && existing.getPassword().equals(user.getPassword())) {
+				response = new ApiResponse(true, "Login Successful!");
+			} else {
+				response = new ApiResponse(false, "Email or password incorrect.");
+			}
+		} catch (Exception e) {
+			response = new ApiResponse(false, "An error has occured.");
+		}	
+		return response;	
+	}	
 }
