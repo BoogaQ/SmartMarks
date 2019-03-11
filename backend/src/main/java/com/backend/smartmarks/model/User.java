@@ -1,59 +1,98 @@
 package com.backend.smartmarks.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.hibernate.annotations.NaturalId;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 
 @Entity
 @Table(name="users")
-@EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value= {"createdAt", "updatedAt"},
-		allowGetters=true)
-public class User implements Serializable {
+public class User extends AuditModel {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 	
 	@NotBlank
-	private String emailId;
+	private String username;
+	
+	@NaturalId
+	@NotBlank
+	@Email
+	private String email;
 	
 	@NotBlank
 	private String password;
 	
-	@Column(nullable=false, updatable=false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@CreatedDate
-	private Date createdAt;
+	public User() {
+
+    }
 	
-	@Column(nullable=false, updatable=false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@LastModifiedDate
-	private Date updateddAt;
+	public User(String username, String email, String password) {
+		this.username = username;
+		this.email = email;
+		this.password = password;
+	}
 	
+	@ManyToMany(cascade = {
+	        CascadeType.PERSIST,
+	        CascadeType.MERGE
+	    })
+	@JoinTable(name="user_bookmark", 
+				joinColumns = @JoinColumn(name="user_id", referencedColumnName="id"),
+				inverseJoinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"))
+	private Set<Bookmark> bookmarks = new HashSet<>();
+	
+	public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
 	public String getEmail() {
-		return emailId;
+		return email;
 	}
 	public void setEmail(String email) {
-		this.emailId = email;
+		this.email = email;
 	}
+	
+	public String getUsername() {
+		return username;
+	}
+	public void setUSername(String username) {
+		this.username = username;
+	}
+	
 	public String getPassword() {
 		return this.password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void addBookmark(Bookmark b) {
+		bookmarks.add(b);
+		b.getUsers().add(this);
+	}
+	public void removeBookmark(Bookmark b) {
+		bookmarks.remove(b);
+		b.getUsers().remove(this);
+	}
+	
+	public Set<Bookmark> getBookmarks() {
+		return bookmarks;
 	}
 }

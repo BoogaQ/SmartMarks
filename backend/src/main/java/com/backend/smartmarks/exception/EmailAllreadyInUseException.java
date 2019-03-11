@@ -2,19 +2,9 @@ package com.backend.smartmarks.exception;
 
 public class EmailAllreadyInUseException extends RuntimeException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	private Object user;
-	
-	public EmailAllreadyInUseException(Object email) {
-		this.user = email;
+	EmailAllreadyInUseException(String message) {
+		super(message);
 	}
-	
-	public Object getEmail() {
-		return user;
-	}
-
-}
+	EmailAllreadyInUseException(String message, Throwable cause) {
+		super(message, cause);
+	}}
