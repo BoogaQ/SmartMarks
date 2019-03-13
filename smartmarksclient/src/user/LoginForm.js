@@ -1,118 +1,78 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Avatar from '@material-ui/core/Avatar';
-import axios from "axios";
-import Background from "./Images/login-background.jpg";
-import CssBaseline from '@material-ui/core/CssBaseline';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Login from "./Login";
-import Paper from '@material-ui/core/Paper';
-import {Redirect} from "react-router-dom"
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
-import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {Link} from "react-router-dom";
 
-
 const styles = theme => ({
-  main: {
-    width: 'auto',
-    [theme.breakpoints.up(350 + theme.spacing.unit * 3 * 2)]: {
-      width: 350,
-      marginLeft: 'auto',
-      marginRight: 'auto',
+    main: {
+      width: 'auto',
+      [theme.breakpoints.up(350 + theme.spacing.unit * 3 * 2)]: {
+        width: 350,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      },
+      height: 400,
     },
-    height: 400,
-  },
-  background: {
-    backgroundImage: `url(${Background})`,
-    backgroundRepeat: "no-repeat",
-  },
-  paper: {
-    marginTop: theme.spacing.unit * 8,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
-  },
-  avatar: {
-    margin: theme.spacing.unit*2,
-    backgroundColor: theme.palette.secondary.main,
-  }
-});
-
-class SignIn extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      value: 0,
-      email: "",
-      password: "",
-      repeat: "",
-      authenticated: false
+    paper: {
+      marginTop: theme.spacing.unit * 8,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+    },
+    avatar: {
+      margin: theme.spacing.unit*2,
+      backgroundColor: theme.palette.secondary.main,
     }
-    this.onChangeText = this.onChangeText.bind(this);
-  }
+  });
 
-  handleChange = (event, value) => {
-    this.setState({value});
-  };
-  
-  submitForm = (event) => {
-    console.log(event.target);
-    event.preventDefault();
-    const {email, password} = this.state;
-    if (!email || !password) return;
-    axios.post("http://localhost:8080/api/login", {
-      "email": email,
-      "password": password,
-    })
-    .then((response) => {
-      if (!response.data.error) {
-        this.setState({authenticated: true});
-        this.props.history.push("/");
-      }
-    })
-
-  };
-  onChangeText = (event) => {
-    const newState = {...this.state};
-    newState[event.target.name] = event.target.value;
-    this.setState(newState);
-  }
-
-  render() {
-    const {classes} = this.props;
-    return (
-      <main className={classes.main}>
-      <Paper className={classes.paper}>
-        <Tabs value={this.state.value} onChange={this.handleChange}>
-          <Tab label="Login"/>
-          <Tab label="Register"/>
-        </Tabs>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <CssBaseline />
-        <Typography component="h1" variant="h5">
-          {this.state.value===0? ("Sign in") : ("Register")}
-        </Typography>
-        {this.state.value===0? (
-          <Login register={false} handleSubmit={this.submitForm} textChange={this.onChangeText}
-           email={this.state.email} password={this.state.password} repeat={this.state.repeat}/>
-        ) : (
-          <Login register={true} handleSubmit={this.submitForm} textChange={this.onChangeText}
-           email={this.state.email} password={this.state.password} repeat={this.state.repeat}/>
+const LoginForm = (props) => {
+  const {classes} = props;
+  return (
+    <div>
+      <form className={classes.form} onSubmit={props.handleSubmit}>
+        <FormControl required fullWidth>
+          <InputLabel htmlFor="email">Email Address</InputLabel>
+          <Input id="email" name="email" value={props.email} onChange={props.textChange} autoFocus />
+        </FormControl>
+        <FormControl required fullWidth>
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <Input name="password" onChange={props.textChange} value={props.password} type="password" id="password"/>
+        </FormControl>
+        {props.register && (
+          <FormControl required fullWidth>
+            <InputLabel htmlFor="repeat password">Password</InputLabel>
+            <Input name="repeat" onChange={props.textChange} value={props.repeat} type="password" id="repeat"/>
+          </FormControl>
         )}
-      </Paper>
-    </main>
-    );
-  };
-}
+        {!props.register && (
+          <FormControlLabel
+          control={<Checkbox value="remember" color="primary" />}
+          label="Remember me"
+        />
+        )}       
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+        >
+          {props.register? ("Register!") : ("Sign in")}
+        </Button>
+      </form>
+    </div>
+  );
+}     
 
-SignIn.propTypes = {
+LoginForm.propTypes = {
   classes: PropTypes.object.isRequired,
-}
+};
 
-export default withStyles(styles)(SignIn);
+export default withStyles(styles)(LoginForm);

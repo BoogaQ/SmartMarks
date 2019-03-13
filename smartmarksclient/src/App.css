@@ -2,6 +2,15 @@
 * {
   font-family: "Roboto";
 }
+
+body {
+  background-image: url("./Images/login-background.jpg");
+  background-color: #cccccc;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+ }
+
 .App {
   text-align: center;
 }

@@ -11,14 +11,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.backend.smartmarks.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import antlr.collections.List;
-
 public class UserPrincipal implements UserDetails {
 	
     private Long id;
     
     private String username;
-
+    
+    @JsonIgnore
     private String email;
 
     @JsonIgnore

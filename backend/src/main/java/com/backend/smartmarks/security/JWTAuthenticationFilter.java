@@ -7,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,14 +19,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 	
+	private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
+	
 	@Autowired
 	private TokenHelper tokenHelper;
 	
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 	
-	private String getToken(HttpServletRequest req) {
+	private String getTokenFromRequest(HttpServletRequest req) {
 		String authHeader = req.getHeader("Authorization");
+		System.out.print(req);
 		if (authHeader != null && authHeader.startsWith("Bearer")) {
 			return authHeader.substring(7);
 		}
@@ -36,7 +41,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 									HttpServletResponse res,
 									FilterChain filterChain) throws IOException, ServletException {		
 		try {
-			String jwt = getToken(req);			
+			String jwt = getTokenFromRequest(req);			
 			if (jwt != null && tokenHelper.validateToken(jwt)) {
 				Long id = tokenHelper.getIdFromToken(jwt);
 				// Optional, can parse details from jwts claims
@@ -47,7 +52,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 	            SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("Could not set user authentication in security context", e);
 		}
 		
 		filterChain.doFilter(req, res);
