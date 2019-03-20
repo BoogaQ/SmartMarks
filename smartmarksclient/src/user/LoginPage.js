@@ -83,8 +83,10 @@ class LoginPage extends React.Component {
     .then((response) => {
       localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
       this.setState({notification: {open: true, variant: "success", message: "Logged in successfully."}});
+      console.log(response);
       this.props.onLogin();
     }).catch((error) => {
+      console.log(error);
       this.setState({notification: {open: true, variant: "error", message: "An error has occured"}});
     })
     

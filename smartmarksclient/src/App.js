@@ -26,9 +26,9 @@ class App extends React.Component {
     this.setState({
       isLoading: true
     });
-    ajax.get(API_URL + "user/me").then(response => {
+    ajax.get(API_URL + "auth/user/me").then(response => {
       this.setState({
-        currentUser: response,
+        currentUser: response.data,
         isAuthenticated: true,
         isLoading: false
       });
@@ -53,6 +53,7 @@ class App extends React.Component {
   }
   handleLogin() {
     this.loadCurrentUser();
+    console.log(this.state);
     this.props.history.push("/");
   }
 
