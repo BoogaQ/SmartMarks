@@ -29,11 +29,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 	
 	private String getTokenFromRequest(HttpServletRequest req) {
 		String authHeader = req.getHeader("Authorization");
-		System.out.print(req);
 		if (authHeader != null && authHeader.startsWith("Bearer")) {
 			return authHeader.substring(7);
-		}
-		return null;
+		} else {
+			return null;
+		}	
 	}
 	// Chekcs weather JWT token is authentic and loads user details to set authentication in spring
 	@Override

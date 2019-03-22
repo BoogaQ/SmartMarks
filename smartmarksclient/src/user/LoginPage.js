@@ -86,7 +86,6 @@ class LoginPage extends React.Component {
       console.log(response);
       this.props.onLogin();
     }).catch((error) => {
-      console.log(error);
       this.setState({notification: {open: true, variant: "error", message: "An error has occured"}});
     })
     

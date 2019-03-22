@@ -4,7 +4,7 @@ import './App.css';
 import DashBoard from "./user/DashBoard";
 import LoginPage from "./user/LoginPage";
 import RegistrationPage from "./user/RegistrationPage";
-import {Router, Switch, Route, Link} from "react-router-dom"; 
+import {Router, Route, Link, Redirect, BrowserRouter, Switch} from "react-router-dom"; 
 import { ACCESS_TOKEN, API_URL } from './constants/constants';
 import {ajax} from "./utils/API";
 import AppBar from "./shared/AppBar";
@@ -26,7 +26,7 @@ class App extends React.Component {
     this.setState({
       isLoading: true
     });
-    ajax.get(API_URL + "auth/user/me").then(response => {
+    ajax.get(API_URL + "users/user/me").then(response => {
       this.setState({
         currentUser: response.data,
         isAuthenticated: true,
@@ -54,11 +54,14 @@ class App extends React.Component {
   handleLogin() {
     this.loadCurrentUser();
     console.log(this.state);
-    this.props.history.push("/");
   }
 
   render() {
     const {classes} = this.props;
+
+    if (this.state.isAuthenticated) {
+      return <Redirect exact from='/login' to={{pathname: '/dashboard'}}/>
+    }  
     return (
       <div className="App">
         <Switch>

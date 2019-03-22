@@ -83,17 +83,18 @@ class RegistrationPage extends React.Component {
 		const registrationRequest = {"username": user.username, "email": user.email, "password": user.password};
     signup(registrationRequest)
     .then(response => {
+      console.log(response);
 				this.setState({notification: {
 					open: true, 
 					variant: "success", 
 					message: "Registration successful."}});
-				this.props.history.push("/");	
 				
     }).catch(error => {
+      console.log(error.response);
 			this.setState({notification: {
 				open: true, 
 				variant: "error", 
-				message: "An error has occured"}});
+				message: error.response.data.message}});
 		})
   };
 
@@ -134,8 +135,8 @@ class RegistrationPage extends React.Component {
               <TextValidator
                 label="Username"
                 name="username"
-                validators={['required']}
-								errorMessages={['This field is required']}
+                validators={['required', 'minStringLength:6', 'maxStringLength:20']}
+								errorMessages={['This field is required', 'Password must be between 6 and 20 characters.', 'Password must be between 6 and 20 characters.']}
 								value={user.username}
 								onChange={this.handleChange}
               />

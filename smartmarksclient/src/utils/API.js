@@ -10,9 +10,13 @@ request.interceptors.request.use(
     (config) => {
         config.headers['Content-Type'] = "application/json";
         let token = localStorage.getItem(ACCESS_TOKEN);
-        if (token) {
-            config.headers['Authorization'] = 'Bearer ' + localStorage.getItem(ACCESS_TOKEN);
+
+        if (token != "undefined") {
+            config.headers['Authorization'] = 'Bearer ' + token;
+        } else {
+            config.headers["Authorization"] = null;
         }
+        console.log(config);
         return config;
     }, 
     (error) => {
@@ -20,23 +24,6 @@ request.interceptors.request.use(
     }
 );
 
-
-/*
-const apirequest = (parameters) => {
-    axios.defaults.headers.common["Content-Type"] = "application/json";
-
-    if (localStorage.getItem(ACCESS_TOKEN)) {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem(ACCESS_TOKEN);
-    }    
-
-    return axios(parameters)
-    .then((response) => {
-        if (response.status < 200 && response.status > 299) {
-            return Promise.reject(response);
-        }    
-        return response;
-    });
-}; */
 
 export function login(loginRequest) {
     axios.post(API_URL + "/auth/login", loginRequest);

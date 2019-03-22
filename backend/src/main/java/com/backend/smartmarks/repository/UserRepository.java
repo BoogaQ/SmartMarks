@@ -11,6 +11,7 @@ import com.backend.smartmarks.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByUsernameOrEmail(String username, String email);
+	User findByEmail(String email);
 	Boolean existsByUsername(String username);
 	Boolean existsByEmail(String email);
 }
