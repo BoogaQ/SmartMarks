@@ -4,7 +4,8 @@ import {withStyles} from "@material-ui/core/styles";
 import ApplicationBar from "../shared/AppBar";
 import Typography from "@material-ui/core/Typography";
 import SideBar from "../sidebar/SideBar";
-
+import history from "../history";
+import {ACCESS_TOKEN} from "../constants/constants";
 ;
 const styles = (theme) => ({
   root: {
@@ -34,13 +35,19 @@ const styles = (theme) => ({
 
 class DashBoard extends React.Component {
   state = {
-    isAuthenticated: false,
+    isAuthenticated: true,
   };
+  handleLogout() {
+    localStorage.removeItem(ACCESS_TOKEN);
+    this.props.isAuthenticated = false;
+    this.props.currentUser = null;
+    history.push("/");
+  }
   render() {
     const {classes} = this.props;
     return (
       <div className={classes.root} style={{width: "100%", margin: 0}}>
-        <ApplicationBar/>     
+        <ApplicationBar isAuthenticated={this.props.isAuthenticated} currentUser={this.props.currentUser}/>     
           <SideBar/>
           <main className={classes.content}>
             <div className={classes.toolbar} />

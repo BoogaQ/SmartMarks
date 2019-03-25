@@ -4,10 +4,11 @@ import './App.css';
 import DashBoard from "./user/DashBoard";
 import LoginPage from "./user/LoginPage";
 import RegistrationPage from "./user/RegistrationPage";
-import {Router, Route, Link, Redirect, BrowserRouter, Switch} from "react-router-dom"; 
+import {Route, Router, Switch} from "react-router-dom"; 
 import { ACCESS_TOKEN, API_URL } from './constants/constants';
 import {ajax} from "./utils/API";
 import AppBar from "./shared/AppBar";
+import history from "./history";
 
 class App extends React.Component {
   constructor(props) {
@@ -17,7 +18,6 @@ class App extends React.Component {
       isAuthenticated: true,
       isLoading: false
     };
-    this.handleLogout = this.handleLogout.bind(this);
     this.loadCurrentUser = this.loadCurrentUser.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
   };
@@ -41,35 +41,28 @@ class App extends React.Component {
   
   componentDidMount() {
     this.loadCurrentUser();
+    console.log(this.state.currentUser);
   }
 
-  handleLogout() {
-    localStorage.removeItem(ACCESS_TOKEN);
-    this.setState({
-      currentUser: null,
-      isAuthenticated: false
-    });
-    this.props.history.push("/");
-  }
   handleLogin() {
     this.loadCurrentUser();
-    console.log(this.state);
+    history.push("/dashboard");
   }
 
   render() {
     const {classes} = this.props;
-
-    if (this.state.isAuthenticated) {
-      return <Redirect exact from='/login' to={{pathname: '/dashboard'}}/>
-    }  
     return (
       <div className="App">
-        <Switch>
-          <Route path="/login" render={(props) => <LoginPage onLogin={this.handleLogin}/>}/>
-          <Route path="/register" render={(props) => <RegistrationPage onLogin={this.handleLogin}/>}/>
-          <Route path="/dashboard" render={(props) => <DashBoard/>}/>
-          <Route path="/" render={(props) => <AppBar/>}/>
-        </Switch>
+        <Router history={history}>
+          <div>         
+            <Switch>    
+              <Route exact path="/" render={(props) => <AppBar/>}/>               
+              <Route path="/login" render={(props) => <LoginPage onLogin={this.handleLogin}/>}/>
+              <Route path="/register" render={(props) => <RegistrationPage onLogin={this.handleLogin}/>}/>                                
+            </Switch>      
+            <Route path="/dashboard" render={(props) => <DashBoard isAuthenticated={this.state.isAuthenticated} currentUser={this.state.currentUser}/>}/>              
+          </div>
+        </Router>
       </div>
     );
   }
