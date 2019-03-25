@@ -27,9 +27,8 @@ public class UserController {
 	
     @GetMapping("/user/me")
     public UserSummaryPayload getCurrentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
-    	System.out.print(currentUser);
-    	//UserSummaryPayload userSummary = new UserSummaryPayload(currentUser.getId(), currentUser.getEmail(), currentUser.getUsername());
-    	return null;
+    	UserSummaryPayload userSummary = new UserSummaryPayload(currentUser.getId(), currentUser.getEmail(), currentUser.getUsername());
+    	return userSummary;
     	
     }
     

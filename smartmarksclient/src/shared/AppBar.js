@@ -14,7 +14,7 @@ import {Link} from "react-router-dom";
 import history from "../history";
 import {ACCESS_TOKEN} from "../constants/constants";
 import TextField from "@material-ui/core/TextField";
-import axios from "../utils/API";
+import {ajax} from "../utils/API";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -25,6 +25,7 @@ import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
+import axios from "axios";
 const styles = (theme) => ({
 	root: {
     flexGrow: 1,
@@ -32,7 +33,8 @@ const styles = (theme) => ({
   },
 	appBar: {
     zIndex: 140000 ,
-    position: "absolute",
+		position: "fixed",
+		height: "10vh"
 	},
 	menu: {
 		zIndex: 140001
@@ -68,7 +70,9 @@ class ApplicationBar extends React.Component {
 		this.state = {
 			anchorEl: null,
 			url: null,
+			siteName: null,
 			dialogOpen: false,
+			img: null,
 			};
 		this.handleOpenDialog = this.handleOpenDialog.bind(this);
 		this.handleCloseDialog = this.handleCloseDialog.bind(this);
@@ -97,6 +101,21 @@ class ApplicationBar extends React.Component {
 
 		handleOpenDialog() {
 			this.setState({dialogOpen: true});
+			axios.get("http://textance.herokuapp.com/title/" + this.state.url)
+			.then(response => {
+				if (response.data!= "") {
+					this.setState({siteName: response.data})
+				}			
+			})
+			.catch(error => {
+				console.log(error.body);
+			})
+			axios.get("http://free.pagepeeker.com/v2/thumbs.php?size=m&url=" + encodeURIComponent(this.state.url))
+			.then((response) => {
+			})
+		}
+		componentWillReceiveProps(nextProps) {
+
 		}
 		handleCloseDialog() {
 			this.setState({dialogOpen: false});
@@ -105,9 +124,13 @@ class ApplicationBar extends React.Component {
 		handleBookmarkAdd() {
 
 		}
+		handleSubmit = (event) => {
+			event.preventDefault();
+		}
 
     render() {
 			const {classes} = this.props;
+			const {currentUser} = this.props;
 			const open = Boolean(this.state.anchorEl);
         return (
 					<div className={classes.root}>
@@ -121,7 +144,7 @@ class ApplicationBar extends React.Component {
 
 								{this.props.isAuthenticated? (
 									<div className={classes.endAnchor}>
-										<form>
+										<form onSubmit={this.handleSubmit}>
 											<TextField className={classes.textField}
 												id="outlined-name"
 												label="URL"
@@ -156,7 +179,7 @@ class ApplicationBar extends React.Component {
 											onClose={this.handleClose}
 										>
 										
-											<MenuItem onClick={this.handleClose}>Profile</MenuItem>
+											<MenuItem onClick={this.handleClose}>{currentUser.userName}</MenuItem>
 											<MenuItem onClick={this.handleLogout}>Logout</MenuItem>
 										</Menu>
 									</div>
@@ -175,11 +198,10 @@ class ApplicationBar extends React.Component {
 								<DialogContent>
 								<Card className={classes.card}>
 									<CardHeader
-										title="Shrimp and Chorizo Paella"
+										title= {this.state.siteName? (this.state.siteName) : ""}
 									/>
 									<CardMedia
 										className={classes.media}
-										image="/static/images/cards/paella.jpg"
 										title="Paella dish"
 									/>
 									<CardContent>

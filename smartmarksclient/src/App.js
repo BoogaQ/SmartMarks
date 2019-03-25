@@ -5,7 +5,7 @@ import DashBoard from "./user/DashBoard";
 import LoginPage from "./user/LoginPage";
 import RegistrationPage from "./user/RegistrationPage";
 import {Route, Router, Switch} from "react-router-dom"; 
-import { ACCESS_TOKEN, API_URL } from './constants/constants';
+import { API_URL } from './constants/constants';
 import {ajax} from "./utils/API";
 import AppBar from "./shared/AppBar";
 import history from "./history";
@@ -33,20 +33,21 @@ class App extends React.Component {
         isLoading: false
       });
     }).catch(error => {
-      this.setState({
-        isLoading: false
-      })
+      console.log(error);
     })
   }
   
   componentDidMount() {
     this.loadCurrentUser();
-    console.log(this.state.currentUser);
+    if (this.state.currentUser) {
+      history.push("/dashboard");
+    }
   }
 
   handleLogin() {
     this.loadCurrentUser();
-    history.push("/dashboard");
+    if (this.state.currentUser)
+      history.push("/dashboard");
   }
 
   render() {
@@ -60,7 +61,7 @@ class App extends React.Component {
               <Route path="/login" render={(props) => <LoginPage onLogin={this.handleLogin}/>}/>
               <Route path="/register" render={(props) => <RegistrationPage onLogin={this.handleLogin}/>}/>                                
             </Switch>      
-            <Route path="/dashboard" render={(props) => <DashBoard isAuthenticated={this.state.isAuthenticated} currentUser={this.state.currentUser}/>}/>              
+          <Route path="/dashboard" render={(props) => <DashBoard/>}/>          
           </div>
         </Router>
       </div>

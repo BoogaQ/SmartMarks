@@ -18,15 +18,18 @@ import { withStyles } from '@material-ui/core';
 const styles = theme => ({
 	root: {
     flexGrow: 1,
-    display: "flex",
-  },
+		display: "flex",
+		position: "absolute",
+		width: 100,
+		overflow: "auto",
+	},
 });
 
 const SideBar = (props) => {
     const {classes} = props;
     return (
-			<div className={classes.root} style={{width: "100%", margin: 0}}>
-        <Drawer variant="permanent" className={classes.drawerPaper}>
+			<div className={classes.root}>
+        <Drawer variant="permanent">
           <Divider/>
 						<List>
 							<ListItem style={{height: 60}}></ListItem>

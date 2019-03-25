@@ -16,7 +16,7 @@ request.interceptors.request.use(
         } else {
             config.headers["Authorization"] = null;
         }
-        console.log(config);
+        config.headers["Access-Control-Allow-Origin"] = "*"; 
         return config;
     }, 
     (error) => {
