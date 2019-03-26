@@ -21,10 +21,6 @@ public class User extends AuditModel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-	
 	@NotBlank
 	private String username;
 	
@@ -55,13 +51,6 @@ public class User extends AuditModel {
 				inverseJoinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"))
 	private Set<Bookmark> bookmarks = new HashSet<>();
 	
-	public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
 	public String getEmail() {
 		return email;
 	}
@@ -94,5 +83,28 @@ public class User extends AuditModel {
 	
 	public Set<Bookmark> getBookmarks() {
 		return bookmarks;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof User)) {
+			return false;
+		}
+		User u = (User) o;
+		System.out.println(this.getEmail() == u.getEmail());
+		System.out.println(this.getEmail().contentEquals(u.getEmail()));
+		return this.getEmail().contentEquals(u.getEmail());
+	}
+	@Override
+	public int hashCode() {
+		int result = 17;
+		
+		result = 31 * result + username.hashCode();
+		result = 31 * result + email.hashCode();
+		result = 31 * result + password.hashCode();
+		return result;
 	}
 }

@@ -15,9 +15,6 @@ public class Bookmark extends AuditModel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 	
 	@NotBlank
 	private String name;
@@ -25,8 +22,6 @@ public class Bookmark extends AuditModel {
 	@NotBlank
 	private String url;
 	
-	@NotBlank
-	private String imageDirectory;
 	
 	@ManyToMany(mappedBy="bookmarks")
 	private Set<User> users = new HashSet<>();
@@ -41,12 +36,7 @@ public class Bookmark extends AuditModel {
 	}
 	
 	//Getters and setters
-	public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
+
 	public Set<User> getUsers() {
 		return users;
 	}
@@ -57,15 +47,28 @@ public class Bookmark extends AuditModel {
 		this.name = name;
 	}
 	public String getUrl() {
-		return this.getUrl();
+		return this.url;
 	}
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public String getImageDirectory() {
-		return imageDirectory;
+	@Override
+	public boolean equals(Object o) {
+		
+		if (o == this) {
+			return true;
+		}
+		if (!(o instanceof Bookmark)) {
+			return false;
+		}
+		Bookmark b = (Bookmark) o;
+		return this.getUrl().contentEquals(b.getUrl());
 	}
-	public void setImageDirectory(String path) {
-		imageDirectory = path;
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result = 31 * result + name.hashCode();
+		result = 31 * result + url.hashCode();
+		return result;
 	}
 }

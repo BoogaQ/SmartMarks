@@ -12,6 +12,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography";
 import {Link} from "react-router-dom";
 import history from "../history";
+import {API_URL} from "../constants/constants";
 import {ACCESS_TOKEN} from "../constants/constants";
 import TextField from "@material-ui/core/TextField";
 import {ajax} from "../utils/API";
@@ -110,12 +111,6 @@ class ApplicationBar extends React.Component {
 			.catch(error => {
 				console.log(error.body);
 			})
-			axios.get("http://free.pagepeeker.com/v2/thumbs.php?size=m&url=" + encodeURIComponent(this.state.url))
-			.then((response) => {
-			})
-		}
-		componentWillReceiveProps(nextProps) {
-
 		}
 		handleCloseDialog() {
 			this.setState({dialogOpen: false});
@@ -126,6 +121,17 @@ class ApplicationBar extends React.Component {
 		}
 		handleSubmit = (event) => {
 			event.preventDefault();
+			const bookmark = {name: this.state.siteName, url: this.state.url}
+			console.log(bookmark);
+			if (this.state.siteName!=null) {
+				ajax.post(API_URL + "bookmarks/add", bookmark)
+					.then(response => {
+						this.handleCloseDialog();
+						console.log(response);
+					}).catch(error => {
+						console.log(error.response);
+					})
+			}
 		}
 
     render() {
@@ -144,17 +150,15 @@ class ApplicationBar extends React.Component {
 
 								{this.props.isAuthenticated? (
 									<div className={classes.endAnchor}>
-										<form onSubmit={this.handleSubmit}>
-											<TextField className={classes.textField}
-												id="outlined-name"
-												label="URL"
-												value={this.state.url}
-												onChange={this.handleChange}
-												margin="normal"
-												variant="outlined"
-											/>
-											<Button className={classes.button} onClick={this.handleOpenDialog} variant="contained" color="primary">Add Bookmark</Button>
-										</form>
+										<TextField className={classes.textField}
+											id="outlined-name"
+											label="URL"
+											value={this.state.url}
+											onChange={this.handleChange}
+											margin="normal"
+											variant="outlined"
+										/>
+										<Button className={classes.button} onClick={this.handleOpenDialog} variant="contained" color="primary">Add Bookmark</Button>
 										<IconButton
 											aria-owns={open ? 'menu-appbar' : undefined}
 											aria-haspopup="true"
@@ -193,7 +197,7 @@ class ApplicationBar extends React.Component {
 								open={this.state.dialogOpen}
 								onClose={this.handleClose}
 								aria-labelledby="form-dialog-title"
-							>
+							> <form onSubmit={this.handleSubmit}>
 								<DialogTitle id="form-dialog-title">Add Bookmark</DialogTitle>
 								<DialogContent>
 								<Card className={classes.card}>
@@ -203,6 +207,7 @@ class ApplicationBar extends React.Component {
 									<CardMedia
 										className={classes.media}
 										title="Paella dish"
+										image="///"
 									/>
 									<CardContent>
 										<Typography variant="h5">
@@ -215,10 +220,11 @@ class ApplicationBar extends React.Component {
 									<Button onClick={this.handleCloseDialog} color="primary">
 										Cancel
 									</Button>
-									<Button onClick={this.handleCloseDialog} color="primary">
+									<Button type="submit" onClick={this.handleCloseDialog} color="primary">
 										Add Bookmark
 									</Button>
 								</DialogActions>
+								</form>
 							</Dialog>
 						</AppBar>
 					</div>

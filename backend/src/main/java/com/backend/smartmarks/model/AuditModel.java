@@ -5,6 +5,9 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,6 +29,10 @@ public class AuditModel implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
 	@Column(nullable=false, updatable=false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -43,5 +50,11 @@ public class AuditModel implements Serializable {
 	public Date updatedAt() {
 		return createdAt;
 	}
+	public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 	
 }
