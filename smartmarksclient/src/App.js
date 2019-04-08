@@ -46,6 +46,7 @@ class App extends React.Component {
 
   handleLogin() {
     this.loadCurrentUser();
+    history.push("/dashboard");
     if (this.state.currentUser)
       history.push("/dashboard");
   }

@@ -22,6 +22,10 @@ public class Bookmark extends AuditModel {
 	@NotBlank
 	private String url;
 	
+	@ManyToMany(cascade=CascadeType.PERSIST)
+	@JoinTable(name="bookmark_tag", joinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"),
+									inverseJoinColumns = @JoinColumn(name="tag_id", referencedColumnName="id"))
+	private Set<Tag> tags = new HashSet<>();
 	
 	@ManyToMany(mappedBy="bookmarks")
 	private Set<User> users = new HashSet<>();
@@ -36,7 +40,10 @@ public class Bookmark extends AuditModel {
 	}
 	
 	//Getters and setters
-
+	public void addTag(Tag t) {
+		tags.add(t);
+		t.getBookmarks().add(this);
+	}
 	public Set<User> getUsers() {
 		return users;
 	}

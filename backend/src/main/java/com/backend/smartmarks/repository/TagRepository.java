@@ -4,10 +4,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.backend.smartmarks.model.Bookmark;
+import com.backend.smartmarks.model.Tag;
 
 @Repository
-public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-	
-	public Optional<Bookmark> findByUrl(String url);
+public interface TagRepository extends JpaRepository<Tag, Long> {
+	public Optional<Tag> findByTagName(String tagName);
 }

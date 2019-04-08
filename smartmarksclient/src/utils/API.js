@@ -39,7 +39,6 @@ export function signup(signupRequest) {
 
 export function getCurrentUser() {
     if (!localStorage.getItem(ACCESS_TOKEN)) {
-        console.log("get wrecked");
         return Promise.reject("No access token set.");
     };
     return request({

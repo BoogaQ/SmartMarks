@@ -69,6 +69,11 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
 	  	</dependency>
+	  	<dependency>
+	  		<groupId>com.textrazor</groupId>
+	  		<artifactId>textrazor</artifactId>
+	  		<version>1.0.12</version>
+	  	</dependency>
 		<!-- https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity5 -->
 		<dependency>
 		    <groupId>org.thymeleaf.extras</groupId>
