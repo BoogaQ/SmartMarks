@@ -8,7 +8,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Toolbar from "@material-ui/core/Toolbar";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import MenuIcon from "@material-ui/icons/Menu";
 import Typography from "@material-ui/core/Typography";
 import {Link} from "react-router-dom";
 import history from "../history";
@@ -19,9 +18,7 @@ import {ajax} from "../utils/API";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
-import Divider from "@material-ui/core/Divider";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
@@ -29,6 +26,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import axios from "axios";
 import Loader from "@material-ui/core/CircularProgress";
 import Chip from "@material-ui/core/Chip";
+import Logo from "../logo.png";
 
 const styles = (theme) => ({
 	root: {
@@ -89,6 +87,10 @@ class ApplicationBar extends React.Component {
 		this.handleOpenDialog = this.handleOpenDialog.bind(this);
 		this.handleCloseDialog = this.handleCloseDialog.bind(this);
 		}
+
+		handleMenu = (event) => {
+			this.setState({anchorEl: event.currentTarget});
+		}
 	
 		// Handle closing of profile anchor
 		handleClose = () => {
@@ -108,7 +110,7 @@ class ApplicationBar extends React.Component {
 		}
 		// Adds a http:// prefix if the url doesn't already have one. 
 		processUrl = (url) => {
-			if (!/^(?:f|ht)tppps?\:\/\//.test(url)) {
+			if (!/^(?:f|ht)tppps?:\/\//.test(url)) {
 				url = "http://" + url;
 			}
 			return url;
@@ -131,7 +133,7 @@ class ApplicationBar extends React.Component {
 			axios.get("http://textance.herokuapp.com/title/" + this.processUrl(this.state.url))
 			.then(response => {
 				this.sendTagRequest(this.state.url);
-				if (response.data!= "") {
+				if (response.data !== "") {
 					this.setState({siteName: response.data, isLoading: false})
 				}			
 			})
@@ -177,7 +179,7 @@ class ApplicationBar extends React.Component {
 						<AppBar position="static" style={{background: "#596982", overflow: "auto"}}className={classes.appBar}>
 							<Toolbar className={classes.toolbar}>
 								<Typography variant="h6" color="inherit" className={classes.grow}>
-									SmartMarks
+									 
 								</Typography>
 							
 							{/*This code is related to the login/register buttons and account tooltip.  */}
@@ -242,8 +244,6 @@ class ApplicationBar extends React.Component {
 									</div>
 									<CardMedia
 										className={classes.media}
-										title="Paella dish"
-										image="///"
 									/>
 									<CardContent>
 										<Typography variant="h5">

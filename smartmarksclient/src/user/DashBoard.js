@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import {withStyles} from "@material-ui/core/styles";
 import ApplicationBar from "../shared/AppBar";
-import Typography from "@material-ui/core/Typography";
 import SideBar from "../sidebar/SideBar";
 import history from "../history";
 import {ACCESS_TOKEN, API_URL} from "../constants/constants";
@@ -10,8 +9,6 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import {ajax} from "../utils/API";
 import Loader from "@material-ui/core/CircularProgress";
-import BookmarkContainer from "../bookmarks/BookmarkContainer";
-import CssBaseline from '@material-ui/core/CssBaseline';
 import classNames from 'classnames';
 import Bookmark from "../bookmarks/bookmark";
 
@@ -22,12 +19,25 @@ const styles = (theme) => ({
   title: {
     flexGrow: 1,
   },
+  layout: {
+    width: "auto",
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unut,
+    [theme.breakpoints.up(1050)]: {
+      width: 1000,
+      marginLeft: "auto",
+      marginRight: "auto",
+    },
+  },
+  cardGrid: {
+    padding: `${theme.spacing.unit * 8}px 0`,
+  },
   container: {
     padding: theme.spacing.unit * 3,
-    marginLeft: 200,
+    marginLeft: 300,
     marginTop: "10vh",
     overflow: "auto",
-    height: "89vh",
+    height: "90vh",
   },
   drawerPaper: {
     position: 'fixed',
@@ -46,8 +56,10 @@ class DashBoard extends React.Component {
       isAuthenticated: false,
       isLoading: true,
       bookmarks: [],
+      tags: ["boom"],
     };
     this.loadBookmarks = this.loadBookmarks.bind(this);
+    this.handleTagClick = this.handleTagClick.bind(this);
   }
   
 
@@ -62,9 +74,6 @@ class DashBoard extends React.Component {
     ajax.get(API_URL + "users/user/bookmarks").then(response => {
       console.log(response.data);
       this.setState({bookmarks: response.data});
-      this.state.bookmarks.forEach((item) => {
-        console.log(item.tags);
-      })
     }).catch(error => {
       console.log(error);
     })
@@ -75,14 +84,31 @@ class DashBoard extends React.Component {
   
   componentDidMount = () => {
     ajax.get(API_URL + "users/user/me").then(response => {
+      console.log(response.data);
       this.setState(
         {currentUser: response.data,
         isAuthenticated: true,
         isLoading: false,})
     }).catch(error => {
-      console.log(error)
+      console.log(error);
     });
     this.loadBookmarks();
+    ajax.get(API_URL + "tags/all").then(response => {
+      this.setState({tags: response.data})
+      console.log(this.state.tags);
+    }).catch(error => {
+      console.lor(error);
+    })
+  }
+
+  handleTagClick = (id) => {
+    console.log(API_URL + "tags/similar/" + id);
+    ajax.post(API_URL + "tags/similar/" + id).then(response => {
+      console.log(API_URL + "tags/" + id);
+      this.setState({bookmarks: response.data});
+    }).catch(error => {
+      console.log(error);
+    })
   }
 
   render() {
@@ -90,35 +116,25 @@ class DashBoard extends React.Component {
     const {bookmarks} = this.state;
     return (
       <div className={classes.root} style={{width: "100%", margin: 0}}>
-      <Grid container>
-        <Grid item sm={12}>
+      
         {this.state.isLoading? (
           <Loader/>
         ) : (
           <ApplicationBar onBookmarkAdd={this.loadBookmarks} isAuthenticated={this.state.isAuthenticated} currentUser={{...this.state.currentUser}}/>
         )}  
-        </Grid>
-        <Grid item lg={3} sm={12}>  
-          <SideBar/>
-        </Grid> 
-        <Grid item lg={12}>
+        <SideBar loadBookmarks={this.loadBookmarks} tags={this.state.tags} onTagClick={this.handleTagClick}/>
         <div className={classes.appBarSpacer}/>
           <Paper className={classes.container}>
-            <React.Fragment>
-              <CssBaseline />
               <div className={classNames(classes.layout, classes.cardGrid)}>
-                <Grid container>
+                <Grid container spacing={15}>
                   {bookmarks.map(bookmark => (
-                    <Grid item sm={6} md={4} lg={3}>
+                    <Grid item sm={6} md={4} lg={3} key={bookmark.id}>
                       <Bookmark tags={bookmark.tags} containerRemove={this.handleDeleteBookmark} url={bookmark.url} title={bookmark.name}/>
                     </Grid>
                   ))}
                 </Grid>
               </div>
-            </React.Fragment>
           </Paper>
-        </Grid>
-      </Grid>
       </div>
     );
   }

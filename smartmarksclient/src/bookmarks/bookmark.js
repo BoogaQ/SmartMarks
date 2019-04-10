@@ -10,11 +10,15 @@ import {withStyles} from "@material-ui/core/styles";
 import { ajax } from "../utils/API";
 import {API_URL} from "../constants/constants";
 import Chip from "@material-ui/core/Chip";
+import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
+import Delete from "@material-ui/icons/Delete";
+import Link from "@material-ui/icons/Link";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const styles = (theme) => ({
 	card: {
 		margin: theme.spacing.unit,
-		height: 350,
+		height: 400,
 		display: "flex",
 		flexDirection: 'column',
 	},  
@@ -74,14 +78,23 @@ class Bookmark extends React.Component {
 					))) : (<Chip label="No tags"/>)}
 				</CardContent>
 				<CardActions>
-					<a href={this.props.url}>
+					<Tooltip title="Visit">
+						<a href={this.props.url}>
+							<Button size="small" color="primary">
+								<Link/>
+							</Button>
+						</a>
+					</Tooltip>
+					<Tooltip title="Favorite">
 						<Button size="small" color="primary">
-							View
+							<FavoriteBorder/>
 						</Button>
-					</a>
-					<Button onClick={this.handleDelete} size="small" color="primary">
-						Remomve
-					</Button>
+					</Tooltip>
+					<Tooltip title="Remove">
+						<Button onClick={this.handleDelete} size="small" color="primary">
+							<Delete/>
+						</Button>
+					</Tooltip>
 				</CardActions>
 			</Card>
 		)
@@ -90,6 +103,7 @@ class Bookmark extends React.Component {
 
 Bookmark.propTypes = {
 	classes: PropTypes.object.isRequired,
+	tags: PropTypes.object.isRequired
 }
 
 export default withStyles(styles)(Bookmark);

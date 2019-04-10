@@ -1,5 +1,5 @@
 // App.js 
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
 import DashBoard from "./user/DashBoard";
 import LoginPage from "./user/LoginPage";
@@ -11,10 +11,10 @@ import AppBar from "./shared/AppBar";
 import history from "./history";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      currentUser: null,
+      currentUser: undefined,
       isAuthenticated: true,
       isLoading: false
     };
@@ -52,7 +52,6 @@ class App extends React.Component {
   }
 
   render() {
-    const {classes} = this.props;
     return (
       <div className="App">
         <Router history={history}>

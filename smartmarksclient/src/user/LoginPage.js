@@ -9,7 +9,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
-import {withRouter} from 'react-router-dom'
 import withStyles from '@material-ui/core/styles/withStyles';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 import {ajax} from "../utils/API";

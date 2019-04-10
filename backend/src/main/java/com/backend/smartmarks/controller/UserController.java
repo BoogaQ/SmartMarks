@@ -1,6 +1,5 @@
 package com.backend.smartmarks.controller;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -10,14 +9,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.backend.smartmarks.exception.BadRequestException;
 import com.backend.smartmarks.model.Bookmark;
-import com.backend.smartmarks.model.Tag;
 import com.backend.smartmarks.model.User;
 import com.backend.smartmarks.payload.BookmarkPayload;
 import com.backend.smartmarks.payload.TagPayload;
@@ -45,10 +41,11 @@ public class UserController {
     	User user = userRepository.findById(currentUser.getId())
     			.orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + currentUser.getId()));
     	Set<BookmarkPayload> bookmarks = new TreeSet<>();
+    	
     	for (Bookmark b : user.getBookmarks()) {
     		BookmarkPayload payload = new BookmarkPayload(b.getName(), b.getUrl(), b.getCreatedAt());
     		if (b.getTags().size() > 0) {
-    			b.getTags().stream().forEach(n -> payload.addTag(new TagPayload(n.getTagName())));
+    			b.getTags().stream().forEach(n -> payload.addTag(new TagPayload(n.getTagName(), n.getId(), b.getTags().size())));
     		}
     		bookmarks.add(payload);
     	}

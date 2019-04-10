@@ -11,7 +11,7 @@ request.interceptors.request.use(
         config.headers['Content-Type'] = "application/json";
         let token = localStorage.getItem(ACCESS_TOKEN);
 
-        if (token != "undefined") {
+        if (token !== "undefined") {
             config.headers['Authorization'] = 'Bearer ' + token;
         } else {
             config.headers["Authorization"] = null;
