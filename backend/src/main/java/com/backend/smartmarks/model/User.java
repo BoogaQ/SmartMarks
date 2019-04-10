@@ -9,6 +9,7 @@ import org.hibernate.annotations.NaturalId;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 
@@ -44,12 +45,13 @@ public class User extends AuditModel {
 	
 	@ManyToMany(cascade = {
 	        CascadeType.PERSIST,
-	        CascadeType.MERGE
+	        CascadeType.MERGE,
+	        CascadeType.REMOVE
 	    })
 	@JoinTable(name="user_bookmark", 
 				joinColumns = @JoinColumn(name="user_id", referencedColumnName="id"),
 				inverseJoinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"))
-	private Set<Bookmark> bookmarks = new HashSet<>();
+	private Set<Bookmark> bookmarks = new TreeSet<>();
 	
 	public String getEmail() {
 		return email;

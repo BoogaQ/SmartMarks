@@ -62,6 +62,9 @@ class DashBoard extends React.Component {
     ajax.get(API_URL + "users/user/bookmarks").then(response => {
       console.log(response.data);
       this.setState({bookmarks: response.data});
+      this.state.bookmarks.forEach((item) => {
+        console.log(item.tags);
+      })
     }).catch(error => {
       console.log(error);
     })
@@ -107,7 +110,7 @@ class DashBoard extends React.Component {
                 <Grid container>
                   {bookmarks.map(bookmark => (
                     <Grid item sm={6} md={4} lg={3}>
-                      <Bookmark containerRemove={this.handleDeleteBookmark} url={bookmark.url} title={bookmark.name}/>
+                      <Bookmark tags={bookmark.tags} containerRemove={this.handleDeleteBookmark} url={bookmark.url} title={bookmark.name}/>
                     </Grid>
                   ))}
                 </Grid>

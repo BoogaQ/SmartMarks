@@ -1,6 +1,7 @@
 package com.backend.smartmarks.controller;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,10 @@ import com.backend.smartmarks.exception.BadRequestException;
 import com.backend.smartmarks.model.Bookmark;
 import com.backend.smartmarks.model.Tag;
 import com.backend.smartmarks.model.User;
+import com.backend.smartmarks.payload.BookmarkPayload;
+import com.backend.smartmarks.payload.TagPayload;
 import com.backend.smartmarks.repository.BookmarkRepository;
+import com.backend.smartmarks.repository.TagRepository;
 import com.backend.smartmarks.repository.UserRepository;
 import com.backend.smartmarks.security.UserPrincipal;
 import com.textrazor.AnalysisException;
@@ -42,13 +46,26 @@ public class BookmarkController {
 	@Autowired
 	UserRepository userRepository;
 	
+	@Autowired
+	TagRepository tagRepository;
+	
 	@PostMapping("/add")
 	public ResponseEntity<?> addBookmark(@AuthenticationPrincipal UserPrincipal currentUser, 
-										@RequestBody Bookmark bookmark) {
+										@RequestBody BookmarkPayload bookmark) {
 		User user = userRepository.findById(currentUser.getId())
 				.orElseThrow(()-> new BadRequestException("Bad request."));
-		Bookmark b = bookmarkRepository.findByUrl(bookmark.getUrl()).orElse(bookmark);
-		System.out.println(user.getBookmarks().contains(bookmark));
+		Bookmark b = bookmarkRepository.findByUrl(bookmark.getUrl()).orElse(new Bookmark(bookmark.getUrl(), bookmark.getName()));
+		List<TagPayload> tags = bookmark.getTags();
+		if (tags != null) {
+			for (Iterator<TagPayload> it = tags.iterator(); it.hasNext();) {
+				TagPayload t = it.next();
+				Tag saved = tagRepository.findByTagName(t.getTagName()).orElse(new Tag(t.getTagName()));
+				if (!b.getTags().contains(saved)) {
+					b.addTag(saved);
+					tagRepository.save(saved);
+				}		
+			}
+		}		
 		if (!(user.getBookmarks().contains(bookmark))) {		
 			user.addBookmark(b);
 			userRepository.save(user);

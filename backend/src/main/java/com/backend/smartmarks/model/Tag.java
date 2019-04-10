@@ -14,6 +14,9 @@ public class Tag extends AuditModel {
 	private float confidenceScore = 1;
 	private String tagName;
 	
+	public Tag() {
+		
+	}
 	public Tag(String tagName) {		
 		this.tagName = tagName;
 	}
@@ -35,5 +38,9 @@ public class Tag extends AuditModel {
 	}
 	public void setScore(float score) {
 		confidenceScore = score;
+	}
+	@Override
+	public String toString() {
+		return tagName;
 	}
 }

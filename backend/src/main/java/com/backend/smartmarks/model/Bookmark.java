@@ -1,6 +1,6 @@
 package com.backend.smartmarks.model;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name="bookmarks")
-public class Bookmark extends AuditModel {
+public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 	
 	/**
 	 * 
@@ -22,13 +22,21 @@ public class Bookmark extends AuditModel {
 	@NotBlank
 	private String url;
 	
-	@ManyToMany(cascade=CascadeType.PERSIST)
+	public Bookmark() {
+		
+	}
+	public Bookmark(String url, String name) {
+		this.name = name;
+		this.url = url;
+	}
+	
+	@ManyToMany(cascade=CascadeType.ALL)
 	@JoinTable(name="bookmark_tag", joinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"),
 									inverseJoinColumns = @JoinColumn(name="tag_id", referencedColumnName="id"))
-	private Set<Tag> tags = new HashSet<>();
+	private List<Tag> tags = new ArrayList<>();
 	
 	@ManyToMany(mappedBy="bookmarks")
-	private Set<User> users = new HashSet<>();
+	private List<User> users = new ArrayList<>();
 	
 	public void addUser(User u) {
 		users.add(u);
@@ -44,7 +52,10 @@ public class Bookmark extends AuditModel {
 		tags.add(t);
 		t.getBookmarks().add(this);
 	}
-	public Set<User> getUsers() {
+	public List<Tag> getTags() {
+		return this.tags;
+	}
+	public List<User> getUsers() {
 		return users;
 	}
 	public String getName() {
@@ -60,6 +71,11 @@ public class Bookmark extends AuditModel {
 		this.url = url;
 	}
 	@Override
+	public int compareTo(Bookmark o) {
+		System.out.println(this.getCreatedAt().compareTo(o.getCreatedAt()));
+		return this.getCreatedAt().compareTo(o.getCreatedAt());
+	}
+	@Override
 	public boolean equals(Object o) {
 		
 		if (o == this) {
@@ -70,12 +86,5 @@ public class Bookmark extends AuditModel {
 		}
 		Bookmark b = (Bookmark) o;
 		return this.getUrl().contentEquals(b.getUrl());
-	}
-	@Override
-	public int hashCode() {
-		int result = 17;
-		result = 31 * result + name.hashCode();
-		result = 31 * result + url.hashCode();
-		return result;
 	}
 }

@@ -83,7 +83,7 @@ class ApplicationBar extends React.Component {
 			isLoading: false,
 			siteName: null,
 			dialogOpen: false,
-			chipData: [],
+			tags: [],
 			tagsLoading: true,
 			};
 		this.handleOpenDialog = this.handleOpenDialog.bind(this);
@@ -118,8 +118,7 @@ class ApplicationBar extends React.Component {
 			this.setState({tagsLoading: true});					
 			ajax.post(API_URL + "bookmarks/analyse", this.processUrl(url))
 				.then(response => {
-					this.setState({chipData: response.data, tagsLoading: false});
-					console.log(this.state.chipData);
+					this.setState({tags: response.data, tagsLoading: false});
 				})
 				.catch(error => {
 					console.log(error);
@@ -147,11 +146,12 @@ class ApplicationBar extends React.Component {
 		// Submits request to add selected bookmark to the currently logged in user.
 		handleSubmitBookmark = (event) => {
 			event.preventDefault();
-			const bookmark = {name: this.state.siteName, url: this.processUrl(this.state.url)}
+			const bookmark = {name: this.state.siteName, url: this.processUrl(this.state.url), tags: this.state.tags}
 			if (this.state.siteName!=null) {
 				ajax.post(API_URL + "bookmarks/add", bookmark)
 					.then(response => {
 						this.handleCloseDialog();
+						this.setState({siteName: null, tags: []});
 						this.props.onBookmarkAdd();
 						console.log(response);
 					}).catch(error => {
@@ -161,10 +161,10 @@ class ApplicationBar extends React.Component {
 		}
 		handleDeleteChip = data => () => {
 			this.setState(state => {
-				const chipData = [...state.chipData];
-				const indexToDelete = chipData.indexOf(data);
-				chipData.splice(indexToDelete, 1);
-				return {chipData};
+				const tags = [...state.tags];
+				const indexToDelete = tags.indexOf(data);
+				tags.splice(indexToDelete, 1);
+				return {tags};
 			})
 		}
 
@@ -254,7 +254,7 @@ class ApplicationBar extends React.Component {
 									{this.state.tagsLoading? (<Loader/>)
 									 : (<CardContent>
 												<Typography variant="h5">
-													Tags:{this.state.chipData.map(data => {
+													Tags:{this.state.tags.map(data => {
 														let icon = null;
 														return (
 															<Chip

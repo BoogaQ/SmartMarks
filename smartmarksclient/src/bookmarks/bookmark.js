@@ -9,11 +9,12 @@ import Button from "@material-ui/core/Button";
 import {withStyles} from "@material-ui/core/styles";
 import { ajax } from "../utils/API";
 import {API_URL} from "../constants/constants";
+import Chip from "@material-ui/core/Chip";
 
 const styles = (theme) => ({
 	card: {
 		margin: theme.spacing.unit,
-		height: 200,
+		height: 350,
 		display: "flex",
 		flexDirection: 'column',
 	},  
@@ -24,12 +25,16 @@ const styles = (theme) => ({
 		textOverflow: "ellipsis",
 		width: "auto",
 	},
+	chip: {
+		margin: theme.spacing.unit * 0.2,
+	}
 });
 
 class Bookmark extends React.Component {
 	constructor() {
 		super();
 		this.state = {
+			tags: [],
 		};
 	}
 	handleDelete = () => {
@@ -56,6 +61,17 @@ class Bookmark extends React.Component {
 					<Typography>
 						{this.props.url}
 					</Typography>
+				</CardContent>
+				<CardContent>
+					{this.props.tags?  (this.props.tags.map(tag => (
+							<Chip
+								key={tag}
+								label={tag.tagName}
+								className={classes.chip}
+								variant="outlined"
+								color="primary"
+							/>
+					))) : (<Chip label="No tags"/>)}
 				</CardContent>
 				<CardActions>
 					<a href={this.props.url}>
