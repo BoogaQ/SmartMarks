@@ -1,23 +1,29 @@
 package com.backend.smartmarks.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.backend.smartmarks.exception.ApiResponse;
 import com.backend.smartmarks.exception.BadRequestException;
+import com.backend.smartmarks.exception.ResourceNotFoundException;
 import com.backend.smartmarks.model.Bookmark;
 import com.backend.smartmarks.model.Tag;
 import com.backend.smartmarks.model.User;
@@ -31,9 +37,6 @@ import com.textrazor.AnalysisException;
 import com.textrazor.NetworkException;
 import com.textrazor.TextRazor;
 import com.textrazor.annotations.AnalyzedText;
-import com.textrazor.annotations.Entity;
-import com.textrazor.annotations.ScoredCategory;
-import com.textrazor.annotations.Topic;
 
 @RestController
 @RequestMapping("api/bookmarks")
@@ -66,7 +69,7 @@ public class BookmarkController {
 				}		
 			}
 		}		
-		if (!(user.getBookmarks().contains(bookmark))) {		
+		if (!(user.getBookmarks().contains(b))) {		
 			user.addBookmark(b);
 			userRepository.save(user);
 			return ResponseEntity.accepted().body(new ApiResponse(true, "Bookmark added"));
@@ -76,7 +79,7 @@ public class BookmarkController {
 		}
 
 	@PostMapping("/remove")
-	public ResponseEntity<?> removeBookmark(@AuthenticationPrincipal UserPrincipal currentUser, @RequestBody String url) {
+	public ResponseEntity<ApiResponse> removeBookmark(@AuthenticationPrincipal UserPrincipal currentUser, @RequestBody String url) {
 		User user = userRepository.findById(currentUser.getId())
 				.orElseThrow(()-> new BadRequestException("User not found."));
 		Bookmark b = bookmarkRepository.findByUrl(url)
@@ -88,6 +91,50 @@ public class BookmarkController {
 		}
 		return ResponseEntity.badRequest().body(new ApiResponse(false, "User by ID " + currentUser.getId() + "doesn't contain said bookmark."));
 	}
+	
+	@GetMapping("/favourites")
+	public ResponseEntity<TreeSet<BookmarkPayload>> getFavourites(@AuthenticationPrincipal UserPrincipal currentUser) {
+		User user = userRepository.findById(currentUser.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
+		
+		TreeSet<BookmarkPayload> payload = user.getFavourites().stream()
+				.map(b -> new BookmarkPayload(b.getName(), b.getUrl(), b.getCreatedAt(), true))
+				.collect(Collectors.toCollection(TreeSet::new));
+		return ResponseEntity.accepted().body(payload);
+	}
+	@PostMapping("/favourites")
+	public ResponseEntity<?> addFavourite(@AuthenticationPrincipal UserPrincipal currentUser, @RequestParam("url") String url) throws UnsupportedEncodingException {
+		String decoded = URLDecoder.decode(url, "UTF-8");
+		System.out.print(decoded);
+		User user = userRepository.findById(currentUser.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
+		
+		Bookmark b = bookmarkRepository.findByUrl(decoded)
+				.orElseThrow(() -> new ResourceNotFoundException("Bookmark", "url", url));
+		if (!(user.getFavourites().contains(b))) {
+			user.addFavourite(b);
+			userRepository.save(user);		
+		} else {
+			user.removeFavourite(b);
+			userRepository.save(user);
+		}
+		return ResponseEntity.accepted().body(new ApiResponse(true, "Operation successful"));		
+	}
+	
+	/*
+	@PostMapping("/favourites/remove/{url}")
+	public ResponseEntity<?> removeFavourite(@AuthenticationPrincipal UserPrincipal currentUser,
+											@PathVariable String url) {
+		User user = userRepository.findById(currentUser.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
+		
+		Bookmark b = bookmarkRepository.findByUrl(url)
+				.orElseThrow(() -> new ResourceNotFoundException("Bookmark", "url", url));
+		user.getFavourites().remove(b);
+		userRepository.save(user);
+		return ResponseEntity.accepted().body(new ApiResponse(true, "Operation successful"));	
+	} */
+	
 	@PostMapping("/analyse")
 	public ResponseEntity<?> analyse(@RequestBody String url) throws NetworkException, AnalysisException {
 		

@@ -130,9 +130,9 @@ class ApplicationBar extends React.Component {
 		// Function that is called when add bookmark button is pressed. 
 		handleOpenDialog() {
 			this.setState({dialogOpen: true, isLoading: true});
+			this.sendTagRequest(this.state.url);
 			axios.get("http://textance.herokuapp.com/title/" + this.processUrl(this.state.url))
 			.then(response => {
-				this.sendTagRequest(this.state.url);
 				if (response.data !== "") {
 					this.setState({siteName: response.data, isLoading: false})
 				}			

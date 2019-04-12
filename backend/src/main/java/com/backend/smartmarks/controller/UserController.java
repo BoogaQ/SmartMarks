@@ -43,7 +43,7 @@ public class UserController {
     	Set<BookmarkPayload> bookmarks = new TreeSet<>();
     	
     	for (Bookmark b : user.getBookmarks()) {
-    		BookmarkPayload payload = new BookmarkPayload(b.getName(), b.getUrl(), b.getCreatedAt());
+    		BookmarkPayload payload = new BookmarkPayload(b.getName(), b.getUrl(), b.getCreatedAt(), user.getFavourites().contains(b));
     		if (b.getTags().size() > 0) {
     			b.getTags().stream().forEach(n -> payload.addTag(new TagPayload(n.getTagName(), n.getId(), b.getTags().size())));
     		}

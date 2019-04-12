@@ -10,6 +10,7 @@ import {withStyles} from "@material-ui/core/styles";
 import { ajax } from "../utils/API";
 import {API_URL} from "../constants/constants";
 import Chip from "@material-ui/core/Chip";
+import Favorite from "@material-ui/icons/Favorite";
 import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 import Delete from "@material-ui/icons/Delete";
 import Link from "@material-ui/icons/Link";
@@ -31,6 +32,12 @@ const styles = (theme) => ({
 	},
 	chip: {
 		margin: theme.spacing.unit * 0.2,
+	},
+	footer: {
+		display: "flex",
+	},
+	footerItem: {
+		flexGrow: 1,
 	}
 });
 
@@ -39,6 +46,7 @@ class Bookmark extends React.Component {
 		super();
 		this.state = {
 			tags: [],
+			isFavourite: false,
 		};
 	}
 	handleDelete = () => {
@@ -50,6 +58,14 @@ class Bookmark extends React.Component {
 			console.log(error.response);
 		})
 	}
+	handleFavourite = () => {
+		console.log(API_URL + "bookmarks/favourites?url=" + encodeURIComponent(this.props.url));
+		ajax.post(API_URL + "bookmarks/favourites/tagUrl=" + this.props.url).then(response => {
+		  this.setState({isFavourite: true});
+		}).catch(error => {
+		  console.log(error);
+		})
+	  }
 	render() {
 		const {classes} = this.props;
 		return (
@@ -77,21 +93,21 @@ class Bookmark extends React.Component {
 							/>
 					))) : (<Chip label="No tags"/>)}
 				</CardContent>
-				<CardActions>
+				<CardActions className={classes.footer}>
 					<Tooltip title="Visit">
 						<a href={this.props.url}>
-							<Button size="small" color="primary">
+							<Button className={classes.footerItem} size="small" color="primary">
 								<Link/>
 							</Button>
 						</a>
 					</Tooltip>
 					<Tooltip title="Favorite">
-						<Button size="small" color="primary">
-							<FavoriteBorder/>
+						<Button className={classes.footerItem} onClick={this.handleFavourite} size="small" color="primary">
+						{this.state.isFavourite? (<Favorite/>) : (<FavoriteBorder/>) }							
 						</Button>
 					</Tooltip>
 					<Tooltip title="Remove">
-						<Button onClick={this.handleDelete} size="small" color="primary">
+						<Button className={classes.footerItem} onClick={this.handleDelete} size="small" color="primary">
 							<Delete/>
 						</Button>
 					</Tooltip>

@@ -1,6 +1,8 @@
 package com.backend.smartmarks.model;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -22,6 +24,17 @@ public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 	@NotBlank
 	private String url;
 	
+	@ManyToMany(cascade=CascadeType.ALL)
+	@JoinTable(name="bookmark_tag", joinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"),
+									inverseJoinColumns = @JoinColumn(name="tag_id", referencedColumnName="id"))
+	private Set<Tag> tags = new HashSet<>();
+	
+	@ManyToMany(mappedBy="favourites")
+	private Set<User> favouritedUsers = new HashSet<>();
+	
+	@ManyToMany(mappedBy="bookmarks")
+	private Set<User> users = new HashSet<>();
+	
 	public Bookmark() {
 		
 	}
@@ -29,14 +42,6 @@ public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 		this.name = name;
 		this.url = url;
 	}
-	
-	@ManyToMany(cascade=CascadeType.ALL)
-	@JoinTable(name="bookmark_tag", joinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"),
-									inverseJoinColumns = @JoinColumn(name="tag_id", referencedColumnName="id"))
-	private List<Tag> tags = new ArrayList<>();
-	
-	@ManyToMany(mappedBy="bookmarks")
-	private List<User> users = new ArrayList<>();
 	
 	public void addUser(User u) {
 		users.add(u);
@@ -52,10 +57,10 @@ public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 		tags.add(t);
 		t.getBookmarks().add(this);
 	}
-	public List<Tag> getTags() {
+	public Set<Tag> getTags() {
 		return this.tags;
 	}
-	public List<User> getUsers() {
+	public Set<User> getUsers() {
 		return users;
 	}
 	public String getName() {
@@ -70,6 +75,15 @@ public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	public Set<User> getFavouritedUsers() {
+		return favouritedUsers;
+	}
+	public void addFavourite(User u) {
+		this.favouritedUsers.add(u);
+		u.getFavourites().add(this);
+	}
+
 	@Override
 	public int compareTo(Bookmark o) {
 		System.out.println(this.getCreatedAt().compareTo(o.getCreatedAt()));
@@ -87,4 +101,5 @@ public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 		Bookmark b = (Bookmark) o;
 		return this.getUrl().contentEquals(b.getUrl());
 	}
+	
 }

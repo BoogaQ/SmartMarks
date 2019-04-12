@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
-import com.backend.smartmarks.model.Tag;
 
 public class BookmarkPayload implements Comparable<BookmarkPayload>{
 	
@@ -19,12 +18,15 @@ public class BookmarkPayload implements Comparable<BookmarkPayload>{
 	@NotBlank
 	private Date createdAt;
 	
+	private boolean favourite = false;
+	
 	private List<TagPayload> tags;
 	
-	public BookmarkPayload(String name, String url, Date date) {
+	public BookmarkPayload(String name, String url, Date date, boolean favourite) {
 		this.name = name;
 		this.url = url;
 		createdAt = date;
+		this.favourite = favourite;
 		tags = new ArrayList<>();
 	}
 	
@@ -45,6 +47,12 @@ public class BookmarkPayload implements Comparable<BookmarkPayload>{
 	}
 	public Date getCreatedAt() {
 		return this.createdAt;
+	}
+	public boolean isFavourite() {
+		return favourite;
+	}
+	public void setFavourite(boolean favourite) {
+		this.favourite = favourite;
 	}
 	@Override
 	public int compareTo(BookmarkPayload b) {

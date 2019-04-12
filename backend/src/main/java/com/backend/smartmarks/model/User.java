@@ -51,7 +51,13 @@ public class User extends AuditModel {
 	@JoinTable(name="user_bookmark", 
 				joinColumns = @JoinColumn(name="user_id", referencedColumnName="id"),
 				inverseJoinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"))
-	private Set<Bookmark> bookmarks = new TreeSet<>();
+	private Set<Bookmark> bookmarks = new HashSet<>();
+	
+	@ManyToMany
+	@JoinTable(name="favourites",
+				joinColumns = @JoinColumn(name="user_id", referencedColumnName="id"),
+				inverseJoinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"))
+	private Set<Bookmark> favourites = new HashSet<>();
 	
 	public String getEmail() {
 		return email;
@@ -85,6 +91,17 @@ public class User extends AuditModel {
 	
 	public Set<Bookmark> getBookmarks() {
 		return bookmarks;
+	}
+	public Set<Bookmark> getFavourites() {
+		return this.favourites;
+	}
+	public void addFavourite(Bookmark b) {
+		favourites.add(b);
+		b.getFavouritedUsers().add(this);
+	}
+	public void removeFavourite(Bookmark b) {
+		favourites.remove(b);
+		b.getFavouritedUsers().remove(this);
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -46,12 +47,16 @@ public class TagController {
 		return ResponseEntity.accepted().body(tags);
 	}
 	@PostMapping("/similar/{id}")
-	public ResponseEntity<TreeSet<BookmarkPayload>> getSimilar(@PathVariable Long id) {
+	public ResponseEntity<TreeSet<BookmarkPayload>> getSimilar(@AuthenticationPrincipal UserPrincipal currentUser, 
+																@PathVariable Long id) {
+		User user = userRepository.findById(currentUser.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
 		Tag tag = tagRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Tag", "id", id));
 		
 		TreeSet<BookmarkPayload> bookmarks = tag.getBookmarks().stream()
-				.map(b -> new BookmarkPayload(b.getName(), b.getUrl(), b.getCreatedAt()))
+				.map(b -> 
+				new BookmarkPayload(b.getName(), b.getUrl(), b.getCreatedAt(), user.getFavourites().contains(b)))
 				.collect(Collectors.toCollection(TreeSet::new));
 		return ResponseEntity.accepted().body(bookmarks);
 	} 

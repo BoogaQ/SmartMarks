@@ -23,7 +23,7 @@ const styles = (theme) => ({
     width: "auto",
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unut,
-    [theme.breakpoints.up(1050)]: {
+    [theme.breakpoints.up(1600)]: {
       width: 1000,
       marginLeft: "auto",
       marginRight: "auto",
@@ -35,9 +35,8 @@ const styles = (theme) => ({
   container: {
     padding: theme.spacing.unit * 3,
     marginLeft: 300,
-    marginTop: "10vh",
     overflow: "auto",
-    height: "90vh",
+    height: "92.8vh",
   },
   drawerPaper: {
     position: 'fixed',
@@ -97,7 +96,7 @@ class DashBoard extends React.Component {
       this.setState({tags: response.data})
       console.log(this.state.tags);
     }).catch(error => {
-      console.lor(error);
+      console.log(error);
     })
   }
 
