@@ -40,7 +40,7 @@ import com.textrazor.annotations.AnalyzedText;
 
 @RestController
 @RequestMapping("api/bookmarks")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class BookmarkController {
 	
 	@Autowired
@@ -121,25 +121,11 @@ public class BookmarkController {
 		return ResponseEntity.accepted().body(new ApiResponse(true, "Operation successful"));		
 	}
 	
-	/*
-	@PostMapping("/favourites/remove/{url}")
-	public ResponseEntity<?> removeFavourite(@AuthenticationPrincipal UserPrincipal currentUser,
-											@PathVariable String url) {
-		User user = userRepository.findById(currentUser.getId())
-				.orElseThrow(() -> new ResourceNotFoundException("User", "id", currentUser.getId()));
-		
-		Bookmark b = bookmarkRepository.findByUrl(url)
-				.orElseThrow(() -> new ResourceNotFoundException("Bookmark", "url", url));
-		user.getFavourites().remove(b);
-		userRepository.save(user);
-		return ResponseEntity.accepted().body(new ApiResponse(true, "Operation successful"));	
-	} */
-	
 	@PostMapping("/analyse")
 	public ResponseEntity<?> analyse(@RequestBody String url) throws NetworkException, AnalysisException {
 		
 		TextRazor client = new TextRazor("ab2f1c71030b2fc1c2700f585a05cb2f41462a06748ba50a19b7f9ac");	
-		
+		System.out.println(url);
 		client.addExtractor("topics");
 		client.setCleanupMode("stripTags");
 		client.setClassifiers(Arrays.asList("textrazor_newscodes"));

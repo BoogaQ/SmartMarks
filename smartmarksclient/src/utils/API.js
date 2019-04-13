@@ -10,7 +10,6 @@ request.interceptors.request.use(
     (config) => {
         config.headers['Content-Type'] = "application/json";
         let token = localStorage.getItem(ACCESS_TOKEN);
-
         if (token !== "undefined") {
             config.headers['Authorization'] = 'Bearer ' + token;
         } else {

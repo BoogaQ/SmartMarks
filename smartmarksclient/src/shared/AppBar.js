@@ -120,6 +120,7 @@ class ApplicationBar extends React.Component {
 			this.setState({tagsLoading: true});					
 			ajax.post(API_URL + "bookmarks/analyse", this.processUrl(url))
 				.then(response => {
+					console.log(response);
 					this.setState({tags: response.data, tagsLoading: false});
 				})
 				.catch(error => {

@@ -11,6 +11,7 @@ import {ajax} from "../utils/API";
 import Loader from "@material-ui/core/CircularProgress";
 import classNames from 'classnames';
 import Bookmark from "../bookmarks/bookmark";
+import Cookies from "universal-cookie";
 
 const styles = (theme) => ({
   button: {
@@ -97,7 +98,10 @@ class DashBoard extends React.Component {
       console.log(this.state.tags);
     }).catch(error => {
       console.log(error);
-    })
+    });
+    const cookies = new Cookies();
+    cookies.set("accessToken", localStorage.getItem("accessToken"), {path: "/"});
+    console.log(cookies.get("accessToken"));
   }
 
   handleTagClick = (id) => {
