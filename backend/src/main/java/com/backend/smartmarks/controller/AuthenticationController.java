@@ -79,6 +79,7 @@ public class AuthenticationController {
 	@PostMapping("/login")
 	public ResponseEntity<?> login (@Valid @RequestBody LoginRequest loginRequest) throws BadRequestException {
 		try {
+			System.out.println(loginRequest.getUsernameOrEmail());
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(),
 															loginRequest.getPassword()));
@@ -88,7 +89,7 @@ public class AuthenticationController {
 			return ResponseEntity.ok(new JWTAuthenticationResponse(jwt));
 		} catch (UsernameNotFoundException e) {
 			e.printStackTrace();
-			return null;
+			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ApiResponse(false, "Invalid credentials."));
 		}
 		
 	}	

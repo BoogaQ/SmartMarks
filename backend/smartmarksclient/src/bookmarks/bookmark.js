@@ -15,11 +15,17 @@ import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 import Delete from "@material-ui/icons/Delete";
 import Link from "@material-ui/icons/Link";
 import Tooltip from "@material-ui/core/Tooltip";
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import CardHeader from '@material-ui/core/CardHeader';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+
 
 const styles = (theme) => ({
 	card: {
 		margin: theme.spacing.unit,
-		height: 400,
+		height: 350,
 		display: "flex",
 		flexDirection: 'column',
 	},  
@@ -32,13 +38,18 @@ const styles = (theme) => ({
 	},
 	chip: {
 		margin: theme.spacing.unit * 0.2,
+		fontSize: "0.7em",
 	},
 	footer: {
 		display: "flex",
 	},
 	footerItem: {
 		flexGrow: 1,
-	}
+		width: 2,
+	},
+	menu: {
+		zIndex: 140001
+	},
 });
 
 class Bookmark extends React.Component {
@@ -47,7 +58,17 @@ class Bookmark extends React.Component {
 		this.state = {
 			tags: [],
 			isFavourite: false,
+			addProjectOpen: false,
+			anchorEl: null,
 		};
+	}
+	handleClose = () => {
+		this.setState({anchorEl: null});
+	}
+
+	handleMenu = (event) => {
+		console.log(event);
+		this.setState({anchorEl: event.currentTarget});
 	}
 	handleDelete = () => {
 		ajax.post(API_URL + "bookmarks/remove", this.props.url)
@@ -59,8 +80,8 @@ class Bookmark extends React.Component {
 		})
 	}
 	handleFavourite = () => {
-		console.log(API_URL + "bookmarks/favourites?url=" + encodeURIComponent(this.props.url));
-		ajax.post(API_URL + "bookmarks/favourites/tagUrl=" + this.props.url).then(response => {
+		console.log(API_URL + "bookmarks/favourites/tagUrl=" + encodeURIComponent(this.props.url));
+		ajax.post(API_URL + "bookmarks/favourites/tagUrl=" + encodeURIComponent(this.props.url)).then(response => {
 		  this.setState({isFavourite: true});
 		}).catch(error => {
 		  console.log(error);
@@ -75,11 +96,8 @@ class Bookmark extends React.Component {
 					title="Image title"
 				/>
 				<CardContent className={classes.cardContent}>
-					<Typography gutterBottom variant="h5" component="h2">
+					<Typography gutterBottom variant="h6" component="h2">
 						{this.props.title}
-					</Typography>
-					<Typography>
-						{this.props.url}
 					</Typography>
 				</CardContent>
 				<CardContent>
@@ -94,8 +112,8 @@ class Bookmark extends React.Component {
 					))) : (<Chip label="No tags"/>)}
 				</CardContent>
 				<CardActions className={classes.footer}>
-					<Tooltip title="Visit">
-						<a href={this.props.url}>
+					<Tooltip title={this.props.url}>
+						<a href={this.props.url} target="_blank">
 							<Button className={classes.footerItem} size="small" color="primary">
 								<Link/>
 							</Button>
@@ -111,6 +129,34 @@ class Bookmark extends React.Component {
 							<Delete/>
 						</Button>
 					</Tooltip>
+					<Tooltip title="Extra">
+						<IconButton className={classes.footerItem} onClick={this.handleMenu}>
+							<MoreVertIcon />
+						</IconButton>
+					</Tooltip>
+					<Menu
+						className={classes.menu}
+						id="menu-appbar"
+						anchorEl={this.state.anchorEl}
+						anchorOrigin={{
+							vertical: 'top',
+							horizontal: 'right',
+						}}
+						transformOrigin={{
+							vertical: 'top',
+							horizontal: 'right',
+						}}
+						open={this.state.addProjectOpen}
+						onClose={this.handleClose}
+					>
+					{this.props.projects?
+					 (this.props.projects.map(project => (
+						<MenuItem onClick={this.handleClose}> {project.name}</MenuItem>
+					 )))  
+					 : (<MenuItem onClick={this.handleClose}> Nothing Here</MenuItem>)
+					 }
+
+					</Menu>
 				</CardActions>
 			</Card>
 		)

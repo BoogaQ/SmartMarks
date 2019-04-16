@@ -12,13 +12,18 @@ if (addBookmarkButton) {
 
 
 addBookmark = (title, url) => {
-    console.log(title);
-    console.log(url);
-    chrome.cookies.get({url: "http://localhost:3000/dashboard", name: "accessToken"}, (cookie) => {
-        
-        let token = cookie.value;
-        let headers = new Headers();
 
+    chrome.cookies.get({url: "http://localhost:3000/dashboard", name: "accessToken"}, (cookie) => {
+        let token;
+        if (cookie != null) {
+            token = cookie.value;
+        }
+        else {
+            chrome.tabs.create({ url: "http://localhost:3000/login" });
+            return;
+        }
+        
+        let headers = new Headers();
         headers.append("Content-Type", "application/json");
 
         if (token !== "null") {

@@ -84,7 +84,7 @@ class LoginPage extends React.Component {
       this.setState({notification: {open: true, variant: "success", message: "Logged in successfully."}});
       this.props.onLogin();
     }).catch((error) => {
-      this.setState({notification: {open: true, variant: "error", message: "An error has occured"}});
+      this.setState({notification: {open: true, variant: "error", message: "Invalid username or password."}});
     })
     
   };

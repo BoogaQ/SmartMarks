@@ -40,7 +40,7 @@ import com.textrazor.annotations.AnalyzedText;
 
 @RestController
 @RequestMapping("api/bookmarks")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*")
 public class BookmarkController {
 	
 	@Autowired
@@ -92,6 +92,11 @@ public class BookmarkController {
 		return ResponseEntity.badRequest().body(new ApiResponse(false, "User by ID " + currentUser.getId() + "doesn't contain said bookmark."));
 	}
 	
+	@PostMapping("/addProject/")
+	public ResponseEntity<?> addProject(@AuthenticationPrincipal UserPrincipal currentUser, @RequestBody String url) {
+		
+	}
+	
 	@GetMapping("/favourites")
 	public ResponseEntity<TreeSet<BookmarkPayload>> getFavourites(@AuthenticationPrincipal UserPrincipal currentUser) {
 		User user = userRepository.findById(currentUser.getId())
@@ -102,8 +107,10 @@ public class BookmarkController {
 				.collect(Collectors.toCollection(TreeSet::new));
 		return ResponseEntity.accepted().body(payload);
 	}
-	@PostMapping("/favourites")
+	
+	@PostMapping("/favourites/tagUrl={url}")
 	public ResponseEntity<?> addFavourite(@AuthenticationPrincipal UserPrincipal currentUser, @RequestParam("url") String url) throws UnsupportedEncodingException {
+		System.out.print(url);
 		String decoded = URLDecoder.decode(url, "UTF-8");
 		System.out.print(decoded);
 		User user = userRepository.findById(currentUser.getId())
@@ -125,7 +132,6 @@ public class BookmarkController {
 	public ResponseEntity<?> analyse(@RequestBody String url) throws NetworkException, AnalysisException {
 		
 		TextRazor client = new TextRazor("ab2f1c71030b2fc1c2700f585a05cb2f41462a06748ba50a19b7f9ac");	
-		System.out.println(url);
 		client.addExtractor("topics");
 		client.setCleanupMode("stripTags");
 		client.setClassifiers(Arrays.asList("textrazor_newscodes"));
