@@ -12,6 +12,7 @@ import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 import {signup} from "../utils/API";
 import Snackbar from '@material-ui/core/Snackbar';
 import Wrapper from "../shared/notification";
+import {ACCESS_TOKEN, API_URL} from "../constants/constants";
 
 const styles = theme => ({
   main: {
@@ -34,11 +35,14 @@ const styles = theme => ({
     alignItems: 'center',
     backgroundColor: "#dee3ea",
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
-    height: 500,
+    height: 400,
   },
   avatar: {
     margin: theme.spacing.unit*2,
     backgroundColor: "black",
+  },
+  submit: {
+    marginTop: 30,
   }
 });
 
@@ -79,12 +83,12 @@ class RegistrationPage extends React.Component {
 		const registrationRequest = {"username": user.username, "email": user.email, "password": user.password};
     signup(registrationRequest)
     .then(response => {
-      console.log(response);
-				this.setState({notification: {
-					open: true, 
-					variant: "success", 
-					message: "Registration successful."}});
-				
+      localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
+      this.setState({notification: {
+        open: true, 
+        variant: "success", 
+        message: "Registration successful."}
+      });		
     }).catch(error => {
       console.log(error.response);
 			this.setState({notification: {
@@ -120,7 +124,7 @@ class RegistrationPage extends React.Component {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Register
           </Typography>
           <ValidatorForm
             ref="form"
