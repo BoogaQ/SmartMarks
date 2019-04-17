@@ -37,8 +37,8 @@ public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 	
 	@ManyToMany
 	@JoinTable(name="project_bookmark",
-				joinColumns = @JoinColumn(name="project_id", referencedColumnName="id"),
-				inverseJoinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"))
+				joinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"),
+				inverseJoinColumns = @JoinColumn(name="project_id", referencedColumnName="id"))
 	private Set<Project> projects = new HashSet<>();
 	
 	public Bookmark() {

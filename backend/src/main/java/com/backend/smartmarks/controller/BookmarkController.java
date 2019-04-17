@@ -91,11 +91,12 @@ public class BookmarkController {
 		}
 		return ResponseEntity.badRequest().body(new ApiResponse(false, "User by ID " + currentUser.getId() + "doesn't contain said bookmark."));
 	}
-	
+	/*
 	@PostMapping("/addProject/")
 	public ResponseEntity<?> addProject(@AuthenticationPrincipal UserPrincipal currentUser, @RequestBody String url) {
 		
 	}
+	*/
 	
 	@GetMapping("/favourites")
 	public ResponseEntity<TreeSet<BookmarkPayload>> getFavourites(@AuthenticationPrincipal UserPrincipal currentUser) {

@@ -10,6 +10,8 @@ import com.backend.smartmarks.model.Project;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-	public Optional<Project> findByName(String name);
+	public Optional<Project> findByNameAndUserId(String name, Long id);
+	public Optional<Project> findByNameIgnoreCase(String name);
+	
 	public boolean existsByName(String name);
 }

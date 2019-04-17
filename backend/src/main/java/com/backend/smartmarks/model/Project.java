@@ -12,6 +12,11 @@ import javax.validation.constraints.NotBlank;
 @Entity(name="projects")
 public class Project extends AuditModel {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@NotBlank
 	String name;
 	
@@ -24,6 +29,10 @@ public class Project extends AuditModel {
 	}
 	public Project(String name) {
 		this.name = name;
+	}
+	public Project(String name, User user) {
+		this.name = name;
+		this.user = user;
 	}
 	
 	@ManyToMany(mappedBy="projects")
@@ -48,5 +57,17 @@ public class Project extends AuditModel {
 	}
 	public void setUser(User u) {
 		this.user = u;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Project)) {
+			return false;
+		}
+		Project p = (Project) o;
+		return p.getName().contentEquals(p.getName());
 	}
 }

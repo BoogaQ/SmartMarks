@@ -122,8 +122,6 @@ public class User extends AuditModel {
 			return false;
 		}
 		User u = (User) o;
-		System.out.println(this.getEmail() == u.getEmail());
-		System.out.println(this.getEmail().contentEquals(u.getEmail()));
 		return this.getEmail().contentEquals(u.getEmail());
 	}
 	@Override

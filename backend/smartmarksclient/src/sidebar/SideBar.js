@@ -64,13 +64,6 @@ const SideBar = (props) => {
 								</ListItemIcon>
 								<ListItemText primary="My List" />
 							</ListItem>
-							<ListItem button key={2}>
-								<ListItemIcon>
-									<FavoriteIcon />
-								</ListItemIcon>
-								<ListItemText primary="My Favourites" />
-							</ListItem>
-
 							<ExpansionPanel className={classes.panel}>
 								<ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
 									<ListItem button key={99}>
@@ -83,7 +76,7 @@ const SideBar = (props) => {
 								<ExpansionPanelDetails className={classes.panel}>
 									<List className={classes.block}>											
 											{projects.map(project => (						
-													<ListItem button onClick={() => props.onProjectClick(project.id)} key={project.id} button className={classes.block} >
+													<ListItem button onClick={() => props.onProjectClick(project.name)} key={project.id} button className={classes.block} >
 													<ListItemIcon>
 														<FolderIcon/>
 													</ListItemIcon>
@@ -124,7 +117,7 @@ const SideBar = (props) => {
 								</ExpansionPanelDetails>
 							</ExpansionPanel>			
 
-							<ListItem button key={5}>
+							<ListItem button key={5} onClick={props.chart}>
 								<ListItemIcon>
 									<BarChartIcon />
 								</ListItemIcon>

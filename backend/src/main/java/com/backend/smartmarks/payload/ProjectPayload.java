@@ -4,10 +4,13 @@ import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.validation.constraints.NotBlank;
+
 import com.backend.smartmarks.model.User;
 
 public class ProjectPayload implements Comparable<ProjectPayload> {
 	
+	@NotBlank
 	private String name;
 	
 	private Long id;
@@ -17,6 +20,10 @@ public class ProjectPayload implements Comparable<ProjectPayload> {
 	private Date createdAt;
 	
 	public ProjectPayload() {}
+	
+	public ProjectPayload(String name) {
+		this.name = name;
+	}
 	
 	public ProjectPayload(Long id, String name, Date created) {
 		this.name = name;

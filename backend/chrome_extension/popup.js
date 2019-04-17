@@ -14,6 +14,7 @@ if (addBookmarkButton) {
 addBookmark = (title, url) => {
 
     chrome.cookies.get({url: "http://localhost:3000/dashboard", name: "accessToken"}, (cookie) => {
+        console.log(cookie);
         let token;
         if (cookie != null) {
             token = cookie.value;

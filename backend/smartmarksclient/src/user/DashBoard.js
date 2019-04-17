@@ -12,6 +12,8 @@ import Loader from "@material-ui/core/CircularProgress";
 import classNames from 'classnames';
 import Bookmark from "../bookmarks/bookmark";
 import Cookies from "universal-cookie";
+import Chart from "../chart";
+
 
 const styles = (theme) => ({
   button: {
@@ -58,9 +60,11 @@ class DashBoard extends React.Component {
       bookmarks: [],
       tags: [],
       projects: [],
+      chartClicked: true,
     };
     this.loadBookmarks = this.loadBookmarks.bind(this);
     this.handleTagClick = this.handleTagClick.bind(this);
+    this.loadTags = this.loadTags.bind(this);
   }
   
 
@@ -72,12 +76,15 @@ class DashBoard extends React.Component {
     history.push("/");
   }
 
+  chartClicked = () => {
+    this.setState({chartClicked: true});
+  }
   loadBookmarks() {
     const cookies = new Cookies();
     console.log(cookies);
     ajax.get(API_URL + "users/user/bookmarks").then(response => {
       console.log(response.data);
-      this.setState({bookmarks: response.data});
+      this.setState({bookmarks: response.data, chartClicked: false});
     }).catch(error => {
       console.log(error);
     })
@@ -126,12 +133,20 @@ class DashBoard extends React.Component {
     console.log(API_URL + "tags/similar/" + id);
     ajax.post(API_URL + "tags/similar/" + id).then(response => {
       console.log(API_URL + "tags/" + id);
-      this.setState({bookmarks: response.data});
+      this.setState({bookmarks: response.data, chartClicked: false});
     }).catch(error => {
       console.log(error);
     })
   }
-
+  projectFilter = (projectName) => {
+    const payload = {name: projectName};
+    ajax.post(API_URL + "projects/retrieveProjectBookmarks", payload).then(response => {
+      console.log(response.data);
+      this.setState({bookmarks: response.data, chartClicked: false});
+    }).catch(error => {
+      console.log(error);
+    });
+  }
   render() {
     const {classes} = this.props;
     const {bookmarks} = this.state;
@@ -144,14 +159,22 @@ class DashBoard extends React.Component {
           <ApplicationBar onBookmarkAdd={this.loadBookmarks} isAuthenticated={this.state.isAuthenticated} 
                           currentUser={{...this.state.currentUser}} onProjectAdd={this.loadProjects}/>
         )}  
-        <SideBar loadBookmarks={this.loadBookmarks} tags={this.state.tags} projects={this.state.projects} onTagClick={this.handleTagClick}/>
+        <SideBar 
+          loadBookmarks={this.loadBookmarks} 
+          tags={this.state.tags} 
+          projects={this.state.projects} 
+          onTagClick={this.handleTagClick}
+          onProjectClick={this.projectFilter}
+          chart={this.chartClicked}/>
         <div className={classes.appBarSpacer}/>
           <Paper className={classes.container}>
-              <div className={classNames(classes.layout, classes.cardGrid)}>
+          {this.state.chartClicked? (<Chart tags={this.state.tags}/>) 
+          : (<div className={classNames(classes.layout, classes.cardGrid)}>
                 <Grid container spacing={15}>
                   {bookmarks.map(bookmark => (
-                    <Grid item sm={6} md={4} lg={3} key={bookmark.id}>
+                    <Grid item sm={6} md={4} lg={4} key={bookmark.id}>
                       <Bookmark 
+                        key={bookmark.name}
                         tags={bookmark.tags} 
                         containerRemove={this.handleDeleteBookmark} 
                         url={bookmark.url} 
@@ -160,7 +183,8 @@ class DashBoard extends React.Component {
                     </Grid>
                   ))}
                 </Grid>
-              </div>
+              </div>) }
+              
           </Paper>
       </div>
     );
