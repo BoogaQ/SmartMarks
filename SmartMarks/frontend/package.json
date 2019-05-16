@@ -1,0 +1,37 @@
+{
+  "name": "smartmarksclient",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
+    "axios": "^0.18.0",
+    "create-react-app": "^2.1.8",
+    "get-title-at-url": "^1.1.6",
+    "material-ui": "^0.20.2",
+    "material-ui-icons": "^1.0.0-beta.36",
+    "react": "^16.8.2",
+    "react-cookie": "^3.1.2",
+    "react-dom": "^16.8.2",
+    "react-material-ui-form-validator": "^2.0.7",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "^2.1.8",
+    "universal-cookie": "^3.1.0",
+    "yarn": "^1.16.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
