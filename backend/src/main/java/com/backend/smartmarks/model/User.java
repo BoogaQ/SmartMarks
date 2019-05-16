@@ -59,6 +59,9 @@ public class User extends AuditModel {
 				inverseJoinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"))
 	private Set<Bookmark> favourites = new HashSet<>();
 	
+	@OneToMany(mappedBy="user", cascade = CascadeType.ALL)
+	private Set<Project> projects = new HashSet<>();
+	
 	public String getEmail() {
 		return email;
 	}
@@ -95,6 +98,9 @@ public class User extends AuditModel {
 	public Set<Bookmark> getFavourites() {
 		return this.favourites;
 	}
+	public Set<Project> getProjects() {
+		return projects;
+	}
 	public void addFavourite(Bookmark b) {
 		favourites.add(b);
 		b.getFavouritedUsers().add(this);
@@ -103,7 +109,10 @@ public class User extends AuditModel {
 		favourites.remove(b);
 		b.getFavouritedUsers().remove(this);
 	}
-	
+	public void addProject(Project p) {
+		projects.add(p);
+		p.setUser(this);
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -113,8 +122,6 @@ public class User extends AuditModel {
 			return false;
 		}
 		User u = (User) o;
-		System.out.println(this.getEmail() == u.getEmail());
-		System.out.println(this.getEmail().contentEquals(u.getEmail()));
 		return this.getEmail().contentEquals(u.getEmail());
 	}
 	@Override

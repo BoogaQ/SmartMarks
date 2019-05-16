@@ -29,7 +29,7 @@ class App extends React.Component {
     ajax.get(API_URL + "users/user/me").then(response => {
       this.setState({
         currentUser: response.data,
-        isAuthenticated: true,
+        isAuthenticated: false,
         isLoading: false
       });
     }).catch(error => {

@@ -35,6 +35,12 @@ public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 	@ManyToMany(mappedBy="bookmarks")
 	private Set<User> users = new HashSet<>();
 	
+	@ManyToMany
+	@JoinTable(name="project_bookmark",
+				joinColumns = @JoinColumn(name="bookmark_id", referencedColumnName="id"),
+				inverseJoinColumns = @JoinColumn(name="project_id", referencedColumnName="id"))
+	private Set<Project> projects = new HashSet<>();
+	
 	public Bookmark() {
 		
 	}
@@ -50,6 +56,9 @@ public class Bookmark extends AuditModel implements Comparable<Bookmark> {
 	public void removeUser(User u) {
 		users.remove(u);
 		u.getBookmarks().remove(this);
+	}
+	public Set<Project> getProjects() {
+		return this.projects;
 	}
 	
 	//Getters and setters

@@ -6,15 +6,13 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
-import {ajax} from "../utils/API";
-import {ACCESS_TOKEN, API_URL} from "../constants/constants";
+import {signup} from "../utils/API";
 import Snackbar from '@material-ui/core/Snackbar';
 import Wrapper from "../shared/notification";
+import {ACCESS_TOKEN, API_URL} from "../constants/constants";
 
 const styles = theme => ({
   main: {
@@ -25,7 +23,7 @@ const styles = theme => ({
       marginLeft: 'auto',
       marginRight: 'auto',
     },
-    height: 400,
+    height: 500,
   },
   button: {
     height: 100,
@@ -42,24 +40,29 @@ const styles = theme => ({
   avatar: {
     margin: theme.spacing.unit*2,
     backgroundColor: "black",
+  },
+  submit: {
+    marginTop: 30,
   }
 });
 
-class LoginPage extends React.Component {
+class RegistrationPage extends React.Component {
   constructor() {
     super();
     this.state = {
-      user: {
-        email: "",
-        password: "",
-      },
+			user: {
+				username: "",
+				email: "",
+				password: "",
+				repeatPassword: "",
+			},
       notification: {
         open: false,
         variant: "success",
         message: "error",
       }
     }
-    this.handleChange = this.handleChange.bind(this);
+		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleNotification = this.handleNotification.bind(this);
     this.handleNotificationClose = this.handleNotificationClose.bind(this);
@@ -75,29 +78,44 @@ class LoginPage extends React.Component {
   }
 
   handleSubmit = (event) => {
-    event.preventDefault();
-    const {user} = this.state;
-    const loginRequest = {"usernameOrEmail": user.email, "password": user.password};
-    ajax.post(API_URL + "auth/login", loginRequest)
-    .then((response) => {
+		event.preventDefault();
+		const {user} = this.state;
+		const registrationRequest = {"username": user.username, "email": user.email, "password": user.password};
+    signup(registrationRequest)
+    .then(response => {
       localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
-      this.setState({notification: {open: true, variant: "success", message: "Logged in successfully."}});
-      this.props.onLogin();
-    }).catch((error) => {
-      this.setState({notification: {open: true, variant: "error", message: "An error has occured"}});
-    })
-    
+      this.setState({notification: {
+        open: true, 
+        variant: "success", 
+        message: "Registration successful."}
+      });		
+    }).catch(error => {
+      console.log(error.response);
+			this.setState({notification: {
+				open: true, 
+				variant: "error", 
+				message: error.response.data.message}});
+		})
   };
 
   handleChange = (event) => {
     const newState = {...this.state};
     newState.user[event.target.name] = event.target.value;
     this.setState(newState);
-  }
+	}
+	
+	componentDidMount() {
+		ValidatorForm.addValidationRule('passwordMatching', (value) => {
+			if (value !== this.state.user.password) {
+					return false;
+			}
+			return true;
+	});
+	}
 
   render() {
-    const {classes} = this.props;
-    const {user} = this.state;
+		const {classes} = this.props;
+		const {user} = this.state;
     return (
       <main className={classes.main}>
         <CssBaseline />
@@ -106,7 +124,7 @@ class LoginPage extends React.Component {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Register
           </Typography>
           <ValidatorForm
             ref="form"
@@ -115,29 +133,47 @@ class LoginPage extends React.Component {
           > 
             <FormControl required fullWidth>
               <TextValidator
-                label="Email"
-                onChange={this.handleChange}
-                name="email"
-                value={user.email}
-                validators={['required', 'isEmail']}
-                errorMessages={['This field is required', 'Email is not valid.']}
+                label="Username"
+                name="username"
+                validators={['required', 'minStringLength:6', 'maxStringLength:20']}
+								errorMessages={['This field is required', 'Password must be between 6 and 20 characters.', 'Password must be between 6 and 20 characters.']}
+								value={user.username}
+								onChange={this.handleChange}
               />
             </FormControl>
             <FormControl required fullWidth>
               <TextValidator
-                label="Password"
-                onChange={this.handleChange}
-                name="password"
-                type="password"
-                value={user.password}
-                validators={['required', 'minStringLength:6', 'maxStringLength:20']}
-                errorMessages={['This field is required', 'Password must be between 6 and 20 characters.', 'Password must be between 6 and 20 characters.']}
+                label="Email"
+                name="email"           
+                validators={['required', 'isEmail']}
+								errorMessages={['This field is required', 'Email is not valid.']}
+								value={user.email}
+								onChange={this.handleChange}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            <FormControl required fullWidth>
+              <TextValidator
+                label="Password"  
+								name="password"
+								type="password"
+                validators={['required', 'minStringLength:6', 'maxStringLength:20']}
+								errorMessages={['This field is required', 'Password must be between 6 and 20 characters.', 'Password must be between 6 and 20 characters.']}
+								value={user.password}
+								onChange={this.handleChange}
+
+              />
+            </FormControl>
+            <FormControl required fullWidth>
+              <TextValidator
+                label="Repeat password"
+								name="repeatPassword"
+								type="password"
+                validators={['passwordMatching', 'required']}
+                errorMessages={['Passwords do not match.', 'This field is required']}
+                value={user.repeatPassword}
+                onChange={this.handleChange}
+              />
+            </FormControl>
             <Button
               type="submit"
               fullWidth
@@ -145,7 +181,7 @@ class LoginPage extends React.Component {
               color="primary"
               className={classes.submit}
             >
-              {"Sign In"}
+              {"Sign up!"}
             </Button>
           </ValidatorForm>
         </Paper>
@@ -168,8 +204,8 @@ class LoginPage extends React.Component {
     )};
 };
 
-LoginPage.propTypes = {
+RegistrationPage.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(LoginPage);
+export default withStyles(styles)(RegistrationPage);
