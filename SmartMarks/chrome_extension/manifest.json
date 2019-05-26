@@ -1,0 +1,19 @@
+{
+    "name": "SmartMarks Extension",
+    "version": "1.0",
+    "description": "Use them smartmarcks well!",
+    "manifest_version" : 2,
+    "browser_action" : {
+        "default_icon": "./images/icon.png",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "activeTab",
+        "storage",
+        "cookies",
+        "http://localhost:3000/dashboard"
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    }
+}

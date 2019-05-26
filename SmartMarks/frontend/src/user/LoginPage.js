@@ -6,8 +6,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
@@ -37,11 +35,14 @@ const styles = theme => ({
     alignItems: 'center',
     backgroundColor: "#dee3ea",
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
-    height: 400,
+    height: 300,
   },
   avatar: {
     margin: theme.spacing.unit*2,
     backgroundColor: "black",
+  },
+  submit: {
+    marginTop: 20,
   }
 });
 
@@ -84,7 +85,7 @@ class LoginPage extends React.Component {
       this.setState({notification: {open: true, variant: "success", message: "Logged in successfully."}});
       this.props.onLogin();
     }).catch((error) => {
-      this.setState({notification: {open: true, variant: "error", message: "An error has occured"}});
+      this.setState({notification: {open: true, variant: "error", message: "Invalid username or password."}});
     })
     
   };
@@ -134,10 +135,6 @@ class LoginPage extends React.Component {
                 errorMessages={['This field is required', 'Password must be between 6 and 20 characters.', 'Password must be between 6 and 20 characters.']}
               />
             </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth

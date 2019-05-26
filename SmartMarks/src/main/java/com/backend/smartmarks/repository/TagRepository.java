@@ -9,4 +9,5 @@ import com.backend.smartmarks.model.Tag;
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
 	public Optional<Tag> findByTagName(String tagName);
+	public Optional<Tag> findByTagNameIgnoreCase(String tagName);
 }

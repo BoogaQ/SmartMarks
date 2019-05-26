@@ -64,21 +64,14 @@ public class AuthenticationController {
 		
 		User result = userRepository.save(user);
 		
-		// Redirect user after successful registration
-		URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/api/users/{id}")
-                .buildAndExpand(result.getId()).toUri();
-		
-		final HttpHeaders headers = new HttpHeaders();
-		headers.set("Access-Control-Expose-Headers", "Location");
-	    System.out.print(headers);
 		// HTTP responses provide links only when redirected. Create response entity that redirects to user dashboard and reports success.
-        return ResponseEntity.created(location).headers(headers).body(new ApiResponse(true, "User registered successfully"));
+        return ResponseEntity.ok().body(new ApiResponse(true, "User registered successfully"));
 
 	}
 	@PostMapping("/login")
 	public ResponseEntity<?> login (@Valid @RequestBody LoginRequest loginRequest) throws BadRequestException {
 		try {
+			System.out.println(loginRequest.getUsernameOrEmail());
 			Authentication authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(),
 															loginRequest.getPassword()));
@@ -88,7 +81,7 @@ public class AuthenticationController {
 			return ResponseEntity.ok(new JWTAuthenticationResponse(jwt));
 		} catch (UsernameNotFoundException e) {
 			e.printStackTrace();
-			return null;
+			return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ApiResponse(false, "Invalid credentials."));
 		}
 		
 	}	
