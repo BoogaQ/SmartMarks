@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ import com.backend.smartmarks.payload.TagPayload;
 import com.backend.smartmarks.repository.BookmarkRepository;
 import com.backend.smartmarks.repository.TagRepository;
 import com.backend.smartmarks.repository.UserRepository;
+import com.backend.smartmarks.security.TokenHelper;
 import com.backend.smartmarks.security.UserPrincipal;
 import com.textrazor.AnalysisException;
 import com.textrazor.NetworkException;
@@ -51,6 +54,8 @@ public class BookmarkController {
 	
 	@Autowired
 	TagRepository tagRepository;
+	
+	private static final Logger logger = LoggerFactory.getLogger(BookmarkController.class);
 	
 	@PostMapping("/add")
 	public ResponseEntity<?> addBookmark(@AuthenticationPrincipal UserPrincipal currentUser, 
@@ -136,7 +141,7 @@ public class BookmarkController {
 		client.addExtractor("topics");
 		client.setCleanupMode("stripTags");
 		client.setClassifiers(Arrays.asList("textrazor_newscodes"));
-		List<String> topics;
+		List<String> topics = null;
 		try {		
 			AnalyzedText response = client.analyzeUrl(url);
 			topics = response.getResponse().getTopics()
@@ -148,8 +153,8 @@ public class BookmarkController {
 			return ResponseEntity.accepted().body(topics);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Error>(HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Error: " + e.getMessage());
+			return ResponseEntity.badRequest().body(topics);
 		}
 		
 	}

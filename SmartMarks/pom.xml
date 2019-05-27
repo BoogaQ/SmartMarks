@@ -79,6 +79,13 @@
 		    <groupId>org.thymeleaf.extras</groupId>
 		    <artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>4.12</version>
+		    <scope>test</scope>
+		</dependency>				
 	</dependencies>
 
 	<build>
@@ -102,8 +109,8 @@
 			                <goal>install-node-and-npm</goal>
 			            </goals>
 			            <configuration>
-			                <nodeVersion>v11.1.0</nodeVersion>
-			                <npmVersion>6.4.1</npmVersion>
+			                <nodeVersion>v11.13.0</nodeVersion>
+			                <npmVersion>6.9.0</npmVersion>
 			            </configuration>
 			        </execution>
 			        <execution>
