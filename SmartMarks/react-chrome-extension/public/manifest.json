@@ -1,0 +1,15 @@
+{
+  "name": "My Extension",
+  "version": "1.0",
+  "manifest_version": 2,
+  "browser_action": {
+      "default_popup": "index.html"
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "cookies",
+    "http://localhost:3000/dashboard"
+],
+  "content_security_policy": "script-src 'self' 'sha256-hNU7Ga0RwTXfRrxZF3cC0SS5P7Gx3cFXXBHfcAin3Q8='; object-src 'self'"
+}
