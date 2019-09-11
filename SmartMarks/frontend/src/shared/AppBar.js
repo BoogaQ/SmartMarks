@@ -29,6 +29,8 @@ import Chip from "@material-ui/core/Chip";
 import Logo from "../logo.png";
 import { ValidatorForm, TextValidator} from 'react-material-ui-form-validator';
 import FormControl from '@material-ui/core/FormControl';
+import Snackbar from '@material-ui/core/Snackbar';
+import Wrapper from "../shared/notification";
 
 const styles = (theme) => ({
 	root: {
@@ -99,10 +101,22 @@ class ApplicationBar extends React.Component {
 			dialog2Open: false,
 			tags: [],
 			tagsLoading: true,
-			projectName: undefined,			
+			projectName: undefined,		
+			notification: {
+        open: false,
+        variant: "success",
+        message: "",
+      }	
 			};
 		this.handleOpenDialog = this.handleOpenDialog.bind(this);
 		this.handleCloseDialog = this.handleCloseDialog.bind(this);
+		}
+
+		handleNotificationClose = (event, reason) => {
+			if (reason === "clickaway") {
+				return;
+			}
+			this.setState({notification: {open: false, variant:this.state.notification.variant, message: "empty"}});
 		}
 		// Handle logging out of account
 		handleLogout() {
@@ -132,7 +146,7 @@ class ApplicationBar extends React.Component {
 		handleOpenDialog() {
 			this.setState({dialogOpen: true, isLoading: true});
 			this.sendTagRequest(this.state.url);
-			axios.get("http://textance.herokuapp.com/title/" + this.processUrl(this.state.url))
+			axios.get("http://textance.herokuapp.com/title/" + this.state.url)
 			.then(response => {
 				if (response.data !== "") {
 					this.setState({siteName: response.data, isLoading: false})
@@ -151,7 +165,6 @@ class ApplicationBar extends React.Component {
 			this.setState({tagsLoading: true});					
 			ajax.post(API_URL + "bookmarks/analyse", this.processUrl(url))
 				.then(response => {
-					console.log(response);
 					this.setState({tags: response.data, tagsLoading: false});
 				})
 				.catch(error => {
@@ -165,10 +178,23 @@ class ApplicationBar extends React.Component {
 				ajax.post(API_URL + "bookmarks/add", bookmark)
 					.then(response => {
 						this.handleCloseDialog();
-						this.setState({siteName: null, tags: []});
-						this.props.onBookmarkAdd();
-						console.log(response);
+						this.setState({
+							siteName: null, 
+							tags: [],
+							notification: {
+								open: true, 
+								variant: "success", 
+								message: "Bookmark Added!"
+							}
+						});
 					}).catch(error => {
+						this.setState({
+							notification: {
+								open: true, 
+								variant: "error", 
+								message: error.response.data.error,
+							}
+						})
 						console.log(error.response);
 					})
 			}
@@ -201,7 +227,6 @@ class ApplicationBar extends React.Component {
 						this.handleCloseDialog();
 						this.setState({projectName: undefined});
 						this.props.onProjectAdd();
-						console.log(response);
 					}).catch(error => {
 						console.log(error);
 					})
@@ -364,6 +389,21 @@ class ApplicationBar extends React.Component {
 								</form>
 							</Dialog>
 						</AppBar>
+						<Snackbar
+							anchorOrigin={{
+								vertical: 'bottom',
+								horizontal: 'right',
+							}}
+							open={this.state.notification.open}
+							autoHideDuration={6000}
+							onClose={this.handleNotificationClose}
+						>
+							<Wrapper
+								onClose={this.handleNotificationClose}
+								variant={this.state.notification.variant}
+								message={this.state.notification.message}
+							/>
+						</Snackbar>    
 					</div>
 				)
    	}	

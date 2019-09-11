@@ -21,44 +21,21 @@ import FolderIcon from "@material-ui/icons/Folder";
 import LocalOffer from "@material-ui/icons/LocalOffer";
 import Search from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
+import {storeBookmarks} from '../actions';
+import {SIMILAR_TAGS} from '../constants';
 
-const styles = theme => ({
-	root: {
-    flexGrow: 1,
-		display: "flex",
-	},
-	drawer: {
-		
-	},
-	panel: {
-		padding: 0,
-	},
-	list: {
-		width: 300,
-		overflow: "auto",
-	},
-	block: {
-		width: 300,
-	},
-	tagSearch: {
-		width: 100,
-	},
-	searchItem: {
-		display: "inline-block",
-	}
-});
-
-const SideBar = (props) => {
-		const {classes} = props;
-		const {tags} = props;
-		const {projects} = props;
+const SideBar = ({classes, bookmarks, tags, projects, dispatch}) => {
+	const [tag, setTag] = React.useState('');
+	const handleChange = tagId => {
+    console.log(tagId);
+  };
     return (
 			<div className={classes.root}>
         <Drawer variant="permanent" className={classes.drawer}>
           <Divider/>
 						<List className={classes.list}>
 							<ListItem key={1} style={{height: 62}}></ListItem>
-							<ListItem button key={20} onClick={props.loadBookmarks}>
+							<ListItem button key={20} onClick={() => dispatch(storeBookmarks(bookmarks))}>
 								<ListItemIcon>
 									<DashboardIcon />
 								</ListItemIcon>
@@ -76,11 +53,11 @@ const SideBar = (props) => {
 								<ExpansionPanelDetails className={classes.panel}>
 									<List className={classes.block}>											
 											{projects.map(project => (						
-													<ListItem button onClick={() => props.onProjectClick(project.name)} key={project.id} button className={classes.block} >
+													<ListItem button onClick={() => {}} value={project.id} button className={classes.block} >
 													<ListItemIcon>
 														<FolderIcon/>
 													</ListItemIcon>
-														<ListItemText key={project.id} primary={project.name}/>
+														<ListItemText primary={project.name}/>
 													</ListItem>																		
 										))}
 									</List>
@@ -106,18 +83,18 @@ const SideBar = (props) => {
 											<TextField className={classes.tagSearch}/>
 										</ListItem >											
 											{tags.map(tag => (						
-													<ListItem button onClick={() => props.onTagClick(tag.id)} key={tag.id} button className={classes.block} >
+														<ListItem button onClick={() => dispatch({type: SIMILAR_TAGS, tag: tag.id})} value={tag.id} button className={classes.block} >
 													<ListItemIcon>
 														<LocalOffer />
 													</ListItemIcon>
-														<ListItemText key={tag.id} primary={tag.tagName + "(" + tag.count + ")"}/>
+														<ListItemText primary={tag.tagName + "(" + tag.count + ")"}/>
 													</ListItem>																		
 										))}
 									</List>
 								</ExpansionPanelDetails>
 							</ExpansionPanel>			
 
-							<ListItem button key={5} onClick={props.chart}>
+							<ListItem button key={5} onClick={() => {}}>
 								<ListItemIcon>
 									<BarChartIcon />
 								</ListItemIcon>
@@ -142,7 +119,7 @@ const SideBar = (props) => {
 								</ListItemIcon>
 								<ListItemText primary="This Month" />
 							</ListItem>
-							<ListItem button key={8}>
+							<ListItem button key={9}>
 								<ListItemIcon>
 									<AssignmentIcon />
 								</ListItemIcon>
@@ -158,4 +135,4 @@ SideBar.propTypes = {
 	classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styles)(SideBar);
+export default SideBar;

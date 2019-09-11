@@ -31,6 +31,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 
+
 const styles = (theme) => ({
 	card: {
 		margin: theme.spacing.unit,
@@ -81,8 +82,15 @@ class Bookmark extends React.Component {
 			tagName: undefined,
 			dialogOpen: false,
 			dialog2Open: false,
+			notification: {
+        open: false,
+        variant: "success",
+        message: "",
+      }
 		};
 	}
+
+	
 	handleClose = () => {
 		this.setState({anchorEl: null});
 	}
@@ -115,14 +123,12 @@ class Bookmark extends React.Component {
 	handleDelete = () => {
 		ajax.post(API_URL + "bookmarks/remove", this.props.url)
 		.then(response => {
-			console.log(response.data);
 			this.props.containerRemove(this.props.url)
 		}).catch(error => {
 			console.log(error.response);
 		})
 	}
 	handleFavourite = () => {
-		console.log(API_URL + "bookmarks/favourites/tagUrl=" + encodeURIComponent(this.props.url));
 		ajax.post(API_URL + "bookmarks/favourites/tagUrl=" + encodeURIComponent(this.props.url)).then(response => {
 		  this.setState({isFavourite: true});
 		}).catch(error => {
@@ -136,7 +142,6 @@ class Bookmark extends React.Component {
 			const payload = {bookmark: this.props.url, tagName: this.state.tagName}
 			ajax.post(API_URL + "tags/addTag", payload).then(response => {
 				this.setState({tags: response.data});
-				console.log(this.state.tags);
 				this.handleCloseDialog();
 			}).catch(error => {
 				console.log(error);
@@ -286,7 +291,6 @@ class Bookmark extends React.Component {
 
 Bookmark.propTypes = {
 	classes: PropTypes.object.isRequired,
-	tags: PropTypes.object.isRequired
 }
 
 export default withStyles(styles)(Bookmark);

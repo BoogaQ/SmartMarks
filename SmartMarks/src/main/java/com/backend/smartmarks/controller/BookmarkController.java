@@ -136,7 +136,6 @@ public class BookmarkController {
 	
 	@PostMapping("/analyse")
 	public ResponseEntity<?> analyse(@RequestBody String url) throws NetworkException, AnalysisException {
-		
 		TextRazor client = new TextRazor("ab2f1c71030b2fc1c2700f585a05cb2f41462a06748ba50a19b7f9ac");	
 		client.addExtractor("topics");
 		client.setCleanupMode("stripTags");
@@ -149,7 +148,7 @@ public class BookmarkController {
 					.limit(5)
 					.map(n -> n.getLabel())
 					.collect(Collectors.toList());
-			
+					
 			return ResponseEntity.accepted().body(topics);
 			
 		} catch (Exception e) {

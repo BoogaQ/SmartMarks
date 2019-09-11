@@ -81,6 +81,7 @@ class LoginPage extends React.Component {
     const loginRequest = {"usernameOrEmail": user.email, "password": user.password};
     ajax.post(API_URL + "auth/login", loginRequest)
     .then((response) => {
+      console.log("Access token: " + response.data.accessToken);
       localStorage.setItem(ACCESS_TOKEN, response.data.accessToken);
       this.setState({notification: {open: true, variant: "success", message: "Logged in successfully."}});
       this.props.onLogin();
